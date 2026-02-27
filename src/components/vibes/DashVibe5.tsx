@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Terminal, Cpu, Workflow, ChevronRight, CheckCircle2, Zap, Lock,
+  Terminal, Cpu, Workflow, ChevronRight, CheckCircle2, Zap, Lock, Clock,
   Target, Trophy, User, X, ArrowRight, LogOut, Shield, Menu, ChevronDown,
   Moon, Sun
 } from 'lucide-react';
@@ -133,54 +133,119 @@ const RoomCard = ({ session, onClick }: { session: Session, onClick: () => void 
 
 const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () => void, onLaunch: () => void }) => {
   const isLocked = session.status === 'LOCKED';
+  const isCompleted = session.status === 'COMPLETED';
+  const isCurrent = session.status === 'CURRENT';
+
+  const statusLabel = isCompleted ? 'Module Terminé' : isCurrent ? 'En Cours' : 'Accès Verrouillé';
+  const statusBadge = isCompleted
+    ? 'bg-green-50 border-green-200 text-green-600'
+    : isCurrent
+      ? 'bg-[#F97316]/5 border-[#F97316]/25 text-[#F97316] animate-pulse'
+      : 'bg-slate-100 border-slate-200 text-slate-400';
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.4)' }} onClick={onClose}>
-      <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto" style={{ background: 'var(--cx-bg)', border: '1px solid var(--cx-border)' }} onClick={e => e.stopPropagation()}>
-        <div className="relative h-2" style={{ background: 'var(--cx-border)' }}>
-          <div className={cn("absolute inset-y-0 left-0", session.status === 'COMPLETED' ? "w-full" : session.status === 'CURRENT' ? "w-1/2" : "w-0")} style={{ background: session.status === 'COMPLETED' ? 'var(--cx-green)' : 'var(--cx-accent)' }} />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 font-sans"
+      style={{ background: 'rgba(0,0,0,0.25)' }}
+      onClick={onClose}
+    >
+      {/* Backdrop blur layer */}
+      <div className="absolute inset-0 backdrop-blur-md" />
+
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-xl bg-white backdrop-blur-xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+      >
+        {/* Top Progress Bar */}
+        <div className="h-1.5 bg-slate-100">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: isCompleted ? '100%' : isCurrent ? '50%' : '0%' }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className={cn('h-full', isCompleted ? 'bg-green-500' : 'bg-[#F97316]')}
+          />
         </div>
+
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors z-10"
+        >
+          <X size={20} />
+        </button>
+
         <div className="p-6 sm:p-8">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <BadgeTag label={session.status === 'COMPLETED' ? 'Module Terminé' : session.status === 'CURRENT' ? 'En Cours' : 'Accès Verrouillé'} variant={session.status === 'COMPLETED' ? 'success' : session.status === 'CURRENT' ? 'active' : 'locked'} />
-                <span className="text-[10px] font-sans uppercase tracking-widest" style={{ color: 'var(--cx-text-muted)' }}>{session.number} • {session.day}</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold font-sans tracking-tight" style={{ color: 'var(--cx-text)' }}>{session.title}</h2>
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-3">
+              <span className={cn('px-3 py-1 rounded-full text-[10px] uppercase tracking-widest border font-bold flex items-center gap-1.5', statusBadge)}>
+                {isCompleted && <CheckCircle2 size={12} />}
+                {isCurrent && <Zap size={12} />}
+                {isLocked && <Lock size={12} />}
+                {statusLabel}
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                {session.number} · {session.day}
+              </span>
             </div>
-            <button onClick={onClose} className="p-2 rounded-full transition-colors hover:opacity-70" style={{ color: 'var(--cx-text-muted)' }}><X size={20} /></button>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 leading-tight">
+              {session.title}
+            </h2>
+            <p className="text-[10px] uppercase tracking-widest text-[#F97316] mt-1.5 font-bold">
+              {session.weekTitle}
+            </p>
           </div>
+
+          {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
             {[
-              { label: 'Récompense', value: `+${session.xp} XP`, accent: true },
-              { label: 'Durée', value: session.duration },
-              { label: 'Secteur', value: `0${session.week}` },
+              { icon: Trophy, label: 'Récompense', value: `+${session.xp} XP`, accent: true },
+              { icon: Clock, label: 'Durée', value: session.duration },
+              { icon: Target, label: 'Secteur', value: `0${session.week}` },
             ].map((item) => (
-              <div key={item.label} className="p-3 rounded-lg" style={{ background: 'var(--cx-surface)', border: '1px solid var(--cx-border)' }}>
-                <p className="text-[9px] uppercase tracking-widest mb-1" style={{ color: 'var(--cx-text-muted)' }}>{item.label}</p>
-                <p className="text-sm font-bold font-sans" style={{ color: item.accent ? 'var(--cx-accent)' : 'var(--cx-text-secondary)' }}>{item.value}</p>
+              <div key={item.label} className="bg-white border border-slate-200 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center">
+                <item.icon size={16} className="text-[#F97316] mb-2" />
+                <p className="text-[9px] uppercase tracking-widest text-slate-400 mb-0.5">{item.label}</p>
+                <p className={cn('text-sm font-bold', item.accent ? 'text-[#F97316]' : 'text-slate-800')}>{item.value}</p>
               </div>
             ))}
           </div>
-          <div className="space-y-4 mb-8">
-            <h4 className="text-[10px] uppercase tracking-widest font-bold pb-2 flex items-center gap-2" style={{ color: 'var(--cx-text-muted)', borderBottom: '1px solid var(--cx-border)' }}><Target size={12} /> Briefing de mission</h4>
-            <p className="text-sm leading-relaxed font-sans" style={{ color: 'var(--cx-text-secondary)' }}>{session.briefing}</p>
+
+          {/* Briefing Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Target size={14} className="text-[#F97316]" />
+              <h4 className="text-[10px] uppercase tracking-widest font-bold text-slate-800">Description</h4>
+            </div>
+            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+              <p className="text-sm text-slate-900 leading-relaxed">
+                {session.briefing}
+              </p>
+            </div>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={onLaunch}
-              disabled={isLocked}
-              className="flex-1 h-12 flex items-center justify-center gap-2 font-sans text-xs font-bold tracking-widest rounded-xl transition-all active:scale-95"
-              style={{
-                background: isLocked ? 'var(--cx-surface-hover)' : 'var(--cx-accent)',
-                color: isLocked ? 'var(--cx-text-muted)' : '#fff',
-                cursor: isLocked ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {isLocked ? 'ACCÈS REFUSÉ' : session.status === 'COMPLETED' ? 'REVOIR LA SESSION' : 'LANCER LA SESSION'}
-              {!isLocked && <ChevronRight size={16} />}
-            </button>
-          </div>
+
+          {/* CTA Button */}
+          <button
+            onClick={onLaunch}
+            disabled={isLocked}
+            className={cn(
+              'w-full py-4 rounded-xl text-xs font-bold tracking-widest transition-all flex items-center justify-center gap-2',
+              isLocked
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                : 'bg-[#F97316] text-white hover:bg-[#ea580c] active:scale-[0.98] shadow-sm hover:shadow-md'
+            )}
+          >
+            {isLocked ? 'ACCÈS REFUSÉ' : isCompleted ? 'REVOIR LA SESSION' : 'LANCER LA SESSION'}
+            {!isLocked && <ChevronRight size={16} />}
+          </button>
         </div>
       </motion.div>
     </motion.div>
