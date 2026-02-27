@@ -201,8 +201,17 @@ const WeekSeparator = ({ week }: { week: number }) => (
 
 const LandingVibe6: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const scrollContentRef = useRef<HTMLDivElement>(null);
+  const [scrollRange, setScrollRange] = useState(0);
+
+  useEffect(() => {
+    if (scrollContentRef.current) {
+      setScrollRange(scrollContentRef.current.scrollWidth - window.innerWidth);
+    }
+  }, []);
+
   const { scrollYProgress } = useScroll({ target: containerRef });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-92%"]);
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
 
   return (
     <div className="bg-[#FFFCFA] text-stone-900 font-mono selection:bg-[#d97757]/30">
@@ -403,7 +412,7 @@ const LandingVibe6: React.FC = () => {
             </div>
           </div>
 
-          <motion.div style={{ x }} className="flex gap-8 px-8 pl-[calc((100vw-1280px)/2)]">
+          <motion.div ref={scrollContentRef} style={{ x }} className="flex gap-8 px-8 pl-[calc((100vw-1280px)/2)]">
             {SESSIONS.map((session) => (
               <React.Fragment key={session.id}>
                 {session.id > 1 && session.id % 3 === 1 && (
