@@ -12,7 +12,12 @@ import {
   Code2,
   Bot,
   Globe,
-  ArrowRight
+  ArrowRight,
+  Quote,
+  Briefcase,
+  GraduationCap,
+  User,
+  TrendingUp
 } from 'lucide-react';
 
 // --- Types ---
@@ -197,7 +202,7 @@ const WeekSeparator = ({ week }: { week: number }) => (
 const LandingVibe6: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-85%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-92%"]);
 
   return (
     <div className="bg-[#FFFCFA] text-stone-900 font-mono selection:bg-[#d97757]/30">
@@ -281,31 +286,108 @@ const LandingVibe6: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* --- STATS TICKER --- */}
-      <div className="bg-[#1C1917] py-12 overflow-hidden flex whitespace-nowrap border-y border-[#d97757]/30">
-        <motion.div animate={{ x: [0, -1000] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="flex gap-24 items-center px-12">
-          {[1, 2].map((i) => (
-            <React.Fragment key={i}>
-              <div className="flex items-center gap-6">
-                <span className="text-6xl font-bold text-white tracking-tighter">84%</span>
-                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">Stack Overflow<br />2025 adoption</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <span className="text-6xl font-bold text-[#d97757] tracking-tighter">41%</span>
-                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">State of Code<br />automation increase</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <span className="text-6xl font-bold text-white tracking-tighter">80%</span>
-                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">Gartner predicted<br />AI contribution</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <span className="text-6xl font-bold text-[#d97757] tracking-tighter">+56%</span>
-                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">PwC 2025<br />Dev performance</span>
-              </div>
-            </React.Fragment>
-          ))}
-        </motion.div>
-      </div>
+      {/* --- SECTION: LOGO WALL (MARKET DEMAND) --- */}
+      <section className="py-24 bg-[#FFFCFA] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 mb-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-[#d97757]/20 mb-4"
+              >
+                <TrendingUp className="w-3 h-3 text-[#d97757]" />
+                <span className="text-[10px] font-mono font-bold tracking-widest text-[#d97757] uppercase">Marché en explosion</span>
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl font-mono font-bold text-stone-900 leading-tight"
+              >
+                ILS RECRUTENT DES DEVS IA.<br />
+                <span className="text-[#d97757]">EN ÊTES-VOUS UN ?</span>
+              </motion.h2>
+            </div>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="max-w-md text-sm font-mono text-stone-500 leading-relaxed"
+            >
+              La demande pour des ingénieurs capables de piloter des agents et d&apos;intégrer des LLM a bondi de +340% en 12 mois. Les leaders de l&apos;industrie cherchent vos futures compétences.
+            </motion.p>
+          </div>
+        </div>
+
+        {/* Infinite Marquee 1 */}
+        <div className="relative flex overflow-x-hidden border-y border-stone-100 bg-white py-6">
+          <motion.div
+            animate={{ x: [0, -1400] }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="flex whitespace-nowrap gap-16 items-center px-8"
+          >
+            {[
+              { name: "Airbus", logo: "/logos/airbus.svg" },
+              { name: "Google", logo: "/logos/google.svg" },
+              { name: "Microsoft", logo: "/logos/microsoft.svg" },
+              { name: "Amazon AWS", logo: "/logos/amazon-aws.svg" },
+              { name: "Meta", logo: "/logos/meta.svg" },
+              { name: "Thales", logo: "/logos/thales.svg" },
+              { name: "Capgemini", logo: "/logos/capgemini.svg" },
+              { name: "Airbus", logo: "/logos/airbus.svg" },
+              { name: "Google", logo: "/logos/google.svg" },
+              { name: "Microsoft", logo: "/logos/microsoft.svg" },
+              { name: "Amazon AWS", logo: "/logos/amazon-aws.svg" },
+              { name: "Meta", logo: "/logos/meta.svg" },
+              { name: "Thales", logo: "/logos/thales.svg" },
+              { name: "Capgemini", logo: "/logos/capgemini.svg" },
+            ].map((company, i) => (
+              <img
+                key={i}
+                src={company.logo}
+                alt={company.name}
+                className="h-10 md:h-12 w-auto opacity-40 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300 cursor-default flex-shrink-0"
+              />
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Infinite Marquee 2 (Reverse) */}
+        <div className="relative flex overflow-x-hidden border-b border-stone-100 bg-white py-6">
+          <motion.div
+            animate={{ x: [-1400, 0] }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="flex whitespace-nowrap gap-16 items-center px-8"
+          >
+            {[
+              { name: "Dassault Systèmes", logo: "/logos/dassault-systemes.svg" },
+              { name: "OVHcloud", logo: "/logos/ovhcloud.svg" },
+              { name: "Mistral AI", logo: "/logos/mistral-ai.svg" },
+              { name: "Datadog", logo: "/logos/datadog.svg" },
+              { name: "Criteo", logo: "/logos/criteo.svg" },
+              { name: "BNP Paribas", logo: "/logos/bnp-paribas.svg" },
+              { name: "Société Générale", logo: "/logos/societe-generale.svg" },
+              { name: "Dassault Systèmes", logo: "/logos/dassault-systemes.svg" },
+              { name: "OVHcloud", logo: "/logos/ovhcloud.svg" },
+              { name: "Mistral AI", logo: "/logos/mistral-ai.svg" },
+              { name: "Datadog", logo: "/logos/datadog.svg" },
+              { name: "Criteo", logo: "/logos/criteo.svg" },
+              { name: "BNP Paribas", logo: "/logos/bnp-paribas.svg" },
+              { name: "Société Générale", logo: "/logos/societe-generale.svg" },
+            ].map((company, i) => (
+              <img
+                key={i}
+                src={company.logo}
+                alt={company.name}
+                className="h-10 md:h-12 w-auto opacity-40 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300 cursor-default flex-shrink-0"
+              />
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
       {/* --- CURRICULUM SECTION (HORIZONTAL SCROLL) --- */}
       <section ref={containerRef} className="relative h-[600vh] bg-[#FFFCFA]">
@@ -361,6 +443,32 @@ const LandingVibe6: React.FC = () => {
         </div>
       </section>
 
+      {/* --- STATS TICKER --- */}
+      <div className="bg-[#1C1917] py-12 overflow-hidden flex whitespace-nowrap border-y border-[#d97757]/30">
+        <motion.div animate={{ x: [0, -1000] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="flex gap-24 items-center px-12">
+          {[1, 2].map((i) => (
+            <React.Fragment key={i}>
+              <div className="flex items-center gap-6">
+                <span className="text-6xl font-bold text-white tracking-tighter">84%</span>
+                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">Stack Overflow<br />2025 adoption</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <span className="text-6xl font-bold text-[#d97757] tracking-tighter">41%</span>
+                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">State of Code<br />automation increase</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <span className="text-6xl font-bold text-white tracking-tighter">80%</span>
+                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">Gartner predicted<br />AI contribution</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <span className="text-6xl font-bold text-[#d97757] tracking-tighter">+56%</span>
+                <span className="text-stone-400 text-sm leading-tight uppercase tracking-widest">PwC 2025<br />Dev performance</span>
+              </div>
+            </React.Fragment>
+          ))}
+        </motion.div>
+      </div>
+
       {/* --- FORMAT SECTION --- */}
       <section className="py-32 px-6 bg-white border-t border-stone-200">
         <div className="max-w-6xl mx-auto">
@@ -391,6 +499,125 @@ const LandingVibe6: React.FC = () => {
                 <p className="text-stone-500 leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- SECTION: TESTIMONIALS (SOCIAL PROOF) --- */}
+      <section className="py-24 bg-[#FFF7ED] border-b border-orange-100">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-[10px] font-mono font-bold tracking-[0.2em] text-[#d97757] uppercase"
+            >
+              Retours d&apos;expérience
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-3xl font-mono font-bold text-stone-900 mt-2"
+            >
+              ILS ONT PASSÉ LE CAP
+            </motion.h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+              className="bg-white p-8 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center">
+                  <User className="w-6 h-6 text-[#d97757]" />
+                </div>
+                <div>
+                  <h4 className="font-mono font-bold text-stone-900 text-sm">Thomas R.</h4>
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-3 h-3 text-stone-400" />
+                    <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Freelance Fullstack</span>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <Quote className="w-8 h-8 text-orange-100 absolute -top-4 -left-2 -z-0" />
+                <p className="relative z-10 font-mono text-sm text-stone-600 leading-relaxed italic">
+                  &quot;Avant CODEX_AI, je passais 6h sur une feature complexe. Maintenant, avec mes propres agents MCP, 2h max. Mes clients pensent que j&apos;ai embauché quelqu&apos;un pour scaler.&quot;
+                </p>
+              </div>
+              <div className="mt-6 pt-6 border-t border-stone-50">
+                <span className="text-[10px] font-mono font-bold text-[#d97757] uppercase tracking-widest">Gain : Productivité x3</span>
+              </div>
+            </motion.div>
+
+            {/* Testimonial 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ y: -5 }}
+              className="bg-white p-8 rounded-xl border border-[#d97757]/20 shadow-md hover:shadow-lg transition-all ring-1 ring-[#d97757]/5"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-[#d97757] flex items-center justify-center">
+                  <Briefcase className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-mono font-bold text-stone-900 text-sm">Sarah M.</h4>
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-3 h-3 text-stone-400" />
+                    <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Dev Senior en ESN</span>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <Quote className="w-8 h-8 text-orange-100 absolute -top-4 -left-2 -z-0" />
+                <p className="relative z-10 font-mono text-sm text-stone-600 leading-relaxed italic">
+                  &quot;J&apos;ai décroché un poste d&apos;Architecte IA 3 mois après la formation. Les concepts d&apos;orchestration d&apos;agents ont fait toute la différence lors des entretiens techniques. Le ROI est dément.&quot;
+                </p>
+              </div>
+              <div className="mt-6 pt-6 border-t border-stone-50">
+                <span className="text-[10px] font-mono font-bold text-green-600 uppercase tracking-widest">Résultat : Promotion Architecte</span>
+              </div>
+            </motion.div>
+
+            {/* Testimonial 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ y: -5 }}
+              className="bg-white p-8 rounded-xl border border-stone-200 shadow-sm hover:shadow-md transition-all"
+            >
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6 text-[#d97757]" />
+                </div>
+                <div>
+                  <h4 className="font-mono font-bold text-stone-900 text-sm">Karim B.</h4>
+                  <div className="flex items-center gap-2">
+                    <User className="w-3 h-3 text-stone-400" />
+                    <span className="text-[10px] font-mono text-stone-400 uppercase tracking-wider">Étudiant en alternance</span>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <Quote className="w-8 h-8 text-orange-100 absolute -top-4 -left-2 -z-0" />
+                <p className="relative z-10 font-mono text-sm text-stone-600 leading-relaxed italic">
+                  &quot;Mon premier agent IA autonome, construit en session 9, gère maintenant toute la documentation technique de mon entreprise. Mon maître d&apos;alternance n&apos;en revenait pas.&quot;
+                </p>
+              </div>
+              <div className="mt-6 pt-6 border-t border-stone-50">
+                <span className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">XP : Premier Agent Deployé</span>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

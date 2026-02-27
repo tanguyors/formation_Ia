@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 110">
+  <rect x="20" y="15" width="16" height="16" fill="#000"/>
+  <rect x="80" y="15" width="16" height="16" fill="#F7D046"/>
+  <rect x="20" y="35" width="16" height="16" fill="#000"/>
+  <rect x="40" y="35" width="16" height="16" fill="#000"/>
+  <rect x="60" y="35" width="16" height="16" fill="#F7D046"/>
+  <rect x="80" y="35" width="16" height="16" fill="#F7D046"/>
+  <rect x="20" y="55" width="16" height="16" fill="#000"/>
+  <rect x="40" y="55" width="16" height="16" fill="#000"/>
+  <rect x="60" y="55" width="16" height="16" fill="#F7D046"/>
+  <rect x="80" y="55" width="16" height="16" fill="#F7D046"/>
+  <rect x="20" y="75" width="16" height="16" fill="#000"/>
+  <rect x="80" y="75" width="16" height="16" fill="#F7D046"/>
+  <text x="115" y="75" font-family="Helvetica Neue, Arial, sans-serif" font-size="50" font-weight="700" fill="#000" letter-spacing="-1">Mistral AI</text>
+</svg>
