@@ -104,16 +104,16 @@ const RESOURCE_LABELS: Record<string, string> = {
 const OBJECTIVE_ICONS = [Terminal, Cpu, Code2, Zap, Layers, Bot, Rocket, Shield, Layout, Timer]
 // Bento card styles rotating
 const BENTO_STYLES = [
-  'col-span-2 bg-white border border-stone-200', // large white
+  'col-span-2 bg-white border border-slate-200', // large white
   'col-span-1 bg-[#1C1917] text-white',          // dark
-  'col-span-1 bg-white border border-stone-200',  // standard
-  'col-span-1 bg-[#FFF7ED] border border-[#FED7AA]', // warm surface
-  'col-span-1 bg-[#d97757] text-white',           // accent
-  'col-span-2 bg-white border border-stone-200',  // large white again
+  'col-span-1 bg-white border border-slate-200',  // standard
+  'col-span-1 bg-[#F97316]/10] border border-[#F97316]/20]', // warm surface
+  'col-span-1 bg-[#F97316] text-white',           // accent
+  'col-span-2 bg-white border border-slate-200',  // large white again
   'col-span-1 bg-[#1C1917] text-white',
-  'col-span-1 bg-[#d97757] text-white',
-  'col-span-1 bg-white border border-stone-200',
-  'col-span-2 bg-[#FFF7ED] border border-[#FED7AA]',
+  'col-span-1 bg-[#F97316] text-white',
+  'col-span-1 bg-white border border-slate-200',
+  'col-span-2 bg-[#F97316]/10] border border-[#F97316]/20]',
 ]
 
 export default function SessionDetailPage() {
@@ -169,25 +169,25 @@ export default function SessionDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFFCFA] font-mono flex flex-col items-center justify-center p-6">
-        <Loader2 className="w-8 h-8 text-[#d97757] animate-spin mb-4" />
-        <p className="text-[10px] uppercase tracking-widest text-stone-400">Chargement...</p>
+      <div className="min-h-screen bg-[#ffffff] font-sans flex flex-col items-center justify-center p-6">
+        <Loader2 className="w-8 h-8 text-[#F97316] animate-spin mb-4" />
+        <p className="text-[10px] uppercase tracking-widest text-slate-400">Chargement...</p>
       </div>
     )
   }
 
   if (error || !session) {
     return (
-      <div className="min-h-screen bg-[#FFFCFA] font-mono flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-[#ffffff] font-sans flex flex-col items-center justify-center p-6 text-center">
         <div className="w-16 h-16 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mb-6">
           <Lock className="w-6 h-6 text-red-500" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-stone-900 mb-2">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-2">
           {error ? "Erreur de chargement" : "Session non trouvée"}
         </h1>
         <button
           onClick={() => router.push('/formation')}
-          className="text-[#d97757] text-sm hover:underline flex items-center gap-2"
+          className="text-[#F97316] text-sm hover:underline flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" /> Retour au parcours
         </button>
@@ -199,7 +199,7 @@ export default function SessionDetailPage() {
   const effectivePhase = session.userStatus === 'COMPLETED' ? 'course' : phase
 
   return (
-    <div className="bg-[#FFFCFA] font-mono text-stone-900 selection:bg-[#FED7AA] selection:text-[#d97757]">
+    <div className="bg-[#ffffff] font-sans text-slate-900 selection:bg-[#F97316]/20] selection:text-[#F97316]">
 
       <AnimatePresence mode="wait">
         {/* ═══════════════════════ PHASE 1: BRIEFING (BENTO GRID) ═══════════════════════ */}
@@ -217,29 +217,29 @@ export default function SessionDetailPage() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => router.push('/formation')}
-                  className="p-2 hover:bg-stone-100 rounded-full transition-colors border border-stone-200 group"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors border border-slate-200 group"
                 >
                   <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
                 </button>
-                <div className="flex items-center gap-3 bg-white border border-stone-200 rounded-lg px-3 py-1">
-                  <button className="text-stone-400 hover:text-[#1C1917] transition-colors"><ChevronLeft size={16} /></button>
+                <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg px-3 py-1">
+                  <button className="text-slate-400 hover:text-[#1C1917] transition-colors"><ChevronLeft size={16} /></button>
                   <span className="text-xs font-bold tracking-tighter">
                     {formatSessionNumber(session.sessionNumber)} / 12
                   </span>
-                  <button className="text-stone-400 hover:text-[#1C1917] transition-colors"><ChevronRight size={16} /></button>
+                  <button className="text-slate-400 hover:text-[#1C1917] transition-colors"><ChevronRight size={16} /></button>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[#FFF7ED] text-[#d97757] border border-[#FED7AA]">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[#F97316]/10] text-[#F97316] border border-[#F97316]/20]">
                   WEEK {session.week}
                 </span>
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white text-stone-500 border border-stone-200">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white text-slate-500 border border-slate-200">
                   {formatDuration(session.durationMinutes)}
                 </span>
                 <span className="hidden sm:inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[#1C1917] text-white">
                   {getDayName(session.day)}
                 </span>
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[#d97757] text-white flex items-center gap-1">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[#F97316] text-white flex items-center gap-1">
                   <Zap size={10} /> +100 XP
                 </span>
               </div>
@@ -252,7 +252,7 @@ export default function SessionDetailPage() {
               transition={{ delay: 0.1 }}
               className="shrink-0"
             >
-              <p className="text-[10px] text-[#d97757] font-bold tracking-widest uppercase">
+              <p className="text-[10px] text-[#F97316] font-bold tracking-widest uppercase">
                 Session {session.sessionNumber} — {getDayName(session.day)}
               </p>
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase leading-tight">
@@ -271,7 +271,7 @@ export default function SessionDetailPage() {
                 const Icon = OBJECTIVE_ICONS[idx % OBJECTIVE_ICONS.length]
                 const style = BENTO_STYLES[idx % BENTO_STYLES.length]
                 const isDark = style.includes('bg-[#1C1917]')
-                const isAccent = style.includes('bg-[#d97757]')
+                const isAccent = style.includes('bg-[#F97316]')
 
                 return (
                   <motion.div
@@ -285,29 +285,29 @@ export default function SessionDetailPage() {
                     <div className="flex items-center gap-2 mb-2">
                       <div className={cn(
                         'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
-                        isDark ? 'bg-stone-800' : isAccent ? 'bg-white/20' : 'bg-[#FFF7ED]'
+                        isDark ? 'bg-slate-800' : isAccent ? 'bg-white/20' : 'bg-[#F97316]/10]'
                       )}>
                         <Icon size={16} className={cn(
-                          isDark ? 'text-[#FED7AA]' : isAccent ? 'text-white' : 'text-[#d97757]'
+                          isDark ? 'text-[#F97316]/20]' : isAccent ? 'text-white' : 'text-[#F97316]'
                         )} />
                       </div>
                       <span className={cn(
                         'text-[10px] font-bold uppercase tracking-widest',
-                        isDark ? 'text-stone-500' : isAccent ? 'text-white/60' : 'text-stone-400'
+                        isDark ? 'text-slate-500' : isAccent ? 'text-white/60' : 'text-slate-400'
                       )}>
                         {String(idx + 1).padStart(2, '0')}
                       </span>
                     </div>
                     <p className={cn(
                       'text-sm sm:text-base font-bold leading-snug',
-                      isDark ? 'text-white' : isAccent ? 'text-white' : 'text-stone-800'
+                      isDark ? 'text-white' : isAccent ? 'text-white' : 'text-slate-800'
                     )}>
                       {objective}
                     </p>
                     {/* Decorative big number */}
                     <span className={cn(
                       'absolute -bottom-2 -right-1 text-6xl font-black pointer-events-none select-none',
-                      isDark ? 'text-stone-800' : isAccent ? 'text-white/10' : 'text-stone-100'
+                      isDark ? 'text-slate-800' : isAccent ? 'text-white/10' : 'text-slate-100'
                     )}>
                       {String(idx + 1).padStart(2, '0')}
                     </span>
@@ -319,22 +319,22 @@ export default function SessionDetailPage() {
             {/* Bottom bar: briefing + CTA */}
             <div className="shrink-0 flex items-center gap-4">
               {session.briefing && (
-                <div className="flex-1 bg-white border border-stone-200 rounded-xl px-4 py-3 min-w-0">
-                  <p className="text-[10px] text-[#d97757] font-bold uppercase tracking-widest mb-1">Briefing</p>
-                  <p className="text-xs text-stone-500 truncate">{session.briefing}</p>
+                <div className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 min-w-0">
+                  <p className="text-[10px] text-[#F97316] font-bold uppercase tracking-widest mb-1">Briefing</p>
+                  <p className="text-xs text-slate-500 truncate">{session.briefing}</p>
                 </div>
               )}
               {session.userStatus === 'LOCKED' ? (
                 <button
                   disabled
-                  className="shrink-0 px-6 py-3 bg-stone-100 border border-stone-200 text-stone-400 rounded-xl flex items-center gap-2 cursor-not-allowed font-bold text-sm"
+                  className="shrink-0 px-6 py-3 bg-slate-100 border border-slate-200 text-slate-400 rounded-xl flex items-center gap-2 cursor-not-allowed font-bold text-sm"
                 >
                   <Lock size={16} /> VERROUILLÉ
                 </button>
               ) : (
                 <button
                   onClick={() => setPhase('course')}
-                  className="shrink-0 px-6 py-3 bg-[#d97757] text-white rounded-xl flex items-center gap-2 font-bold text-sm hover:bg-[#c4674a] shadow-lg shadow-[#d97757]/20 transition-all active:scale-[0.98]"
+                  className="shrink-0 px-6 py-3 bg-[#F97316] text-white rounded-xl flex items-center gap-2 font-bold text-sm hover:bg-[#ea580c] shadow-lg shadow-[#F97316]/20 transition-all active:scale-[0.98]"
                 >
                   <Play size={16} /> COMMENCER
                   <ChevronRight size={16} />
@@ -364,7 +364,7 @@ export default function SessionDetailPage() {
                     router.push('/formation')
                   }
                 }}
-                className="flex items-center gap-2 px-4 py-2 bg-black/50 backdrop-blur-md border border-stone-700 rounded-full text-white/80 hover:text-white hover:bg-black/70 transition-all text-xs font-bold tracking-widest uppercase group"
+                className="flex items-center gap-2 px-4 py-2 bg-black/50 backdrop-blur-md border border-slate-700 rounded-full text-white/80 hover:text-white hover:bg-black/70 transition-all text-xs font-bold tracking-widest uppercase group"
               >
                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                 {session.userStatus !== 'COMPLETED' ? 'Briefing' : 'Parcours'}
@@ -403,7 +403,7 @@ export default function SessionDetailPage() {
                 onQuizPassed={handleQuizPassed}
               />
             ) : (
-              <div className="h-screen w-full bg-[#1C1917] flex flex-col items-center justify-center text-stone-400 font-mono">
+              <div className="h-screen w-full bg-[#1C1917] flex flex-col items-center justify-center text-slate-400 font-sans">
                 <Play size={48} className="mb-4 opacity-30" />
                 <p className="text-lg font-bold text-white">Contenu à venir</p>
                 <p className="text-[10px] uppercase tracking-widest mt-2">Les slides seront disponibles bientôt</p>
@@ -415,7 +415,7 @@ export default function SessionDetailPage() {
 
       {/* Background Decorative Elements */}
       <div className="fixed top-0 right-0 w-1/3 h-1/2 bg-gradient-to-bl from-orange-50/50 to-transparent pointer-events-none -z-10" />
-      <div className="fixed bottom-0 left-0 w-1/4 h-1/3 bg-gradient-to-tr from-[#FFF7ED]/30 to-transparent pointer-events-none -z-10" />
+      <div className="fixed bottom-0 left-0 w-1/4 h-1/3 bg-gradient-to-tr from-[#F97316]/10]/30 to-transparent pointer-events-none -z-10" />
     </div>
   )
 }

@@ -78,13 +78,13 @@ function formatDuration(minutes: number): string {
 
 const BadgeTag = ({ icon: Icon, label, variant = 'default' }: { icon?: React.ElementType, label: string, variant?: 'default' | 'success' | 'active' | 'locked' }) => {
   const variants = {
-    default: 'bg-orange-50 border-orange-200 text-[#d97757]',
+    default: 'bg-[#F97316]/5 border-[#F97316]/20 text-[#F97316]',
     success: 'bg-green-50 border-green-200 text-green-600',
-    active: 'bg-orange-50 border-[#d97757]/25 text-[#d97757] animate-pulse',
-    locked: 'bg-stone-100 border-stone-200 text-stone-400'
+    active: 'bg-[#F97316]/5 border-[#F97316]/25 text-[#F97316] animate-pulse',
+    locked: 'bg-slate-100 border-slate-200 text-slate-400'
   };
   return (
-    <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 border rounded-full text-[10px] font-mono uppercase tracking-widest", variants[variant])}>
+    <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 border rounded-full text-[10px] font-sans uppercase tracking-widest", variants[variant])}>
       {Icon && <Icon size={12} />}
       {label}
     </div>
@@ -101,7 +101,7 @@ const RoomCard = ({ session, onClick }: { session: Session, onClick: () => void 
       whileHover={!isLocked ? { scale: 1.02, translateY: -2 } : {}}
       onClick={onClick}
       className={cn(
-        "relative group flex flex-col items-start text-left w-full h-44 p-5 rounded-2xl border-2 font-mono transition-all duration-300",
+        "relative group flex flex-col items-start text-left w-full h-44 p-5 rounded-2xl border-2 font-sans transition-all duration-300",
         isLocked && "opacity-60 cursor-not-allowed"
       )}
       style={{
@@ -144,9 +144,9 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <BadgeTag label={session.status === 'COMPLETED' ? 'Module Terminé' : session.status === 'CURRENT' ? 'En Cours' : 'Accès Verrouillé'} variant={session.status === 'COMPLETED' ? 'success' : session.status === 'CURRENT' ? 'active' : 'locked'} />
-                <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--cx-text-muted)' }}>{session.number} • {session.day}</span>
+                <span className="text-[10px] font-sans uppercase tracking-widest" style={{ color: 'var(--cx-text-muted)' }}>{session.number} • {session.day}</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold font-mono tracking-tight" style={{ color: 'var(--cx-text)' }}>{session.title}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold font-sans tracking-tight" style={{ color: 'var(--cx-text)' }}>{session.title}</h2>
             </div>
             <button onClick={onClose} className="p-2 rounded-full transition-colors hover:opacity-70" style={{ color: 'var(--cx-text-muted)' }}><X size={20} /></button>
           </div>
@@ -158,19 +158,19 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
             ].map((item) => (
               <div key={item.label} className="p-3 rounded-lg" style={{ background: 'var(--cx-surface)', border: '1px solid var(--cx-border)' }}>
                 <p className="text-[9px] uppercase tracking-widest mb-1" style={{ color: 'var(--cx-text-muted)' }}>{item.label}</p>
-                <p className="text-sm font-bold font-mono" style={{ color: item.accent ? 'var(--cx-accent)' : 'var(--cx-text-secondary)' }}>{item.value}</p>
+                <p className="text-sm font-bold font-sans" style={{ color: item.accent ? 'var(--cx-accent)' : 'var(--cx-text-secondary)' }}>{item.value}</p>
               </div>
             ))}
           </div>
           <div className="space-y-4 mb-8">
             <h4 className="text-[10px] uppercase tracking-widest font-bold pb-2 flex items-center gap-2" style={{ color: 'var(--cx-text-muted)', borderBottom: '1px solid var(--cx-border)' }}><Target size={12} /> Briefing de mission</h4>
-            <p className="text-sm leading-relaxed font-mono" style={{ color: 'var(--cx-text-secondary)' }}>{session.briefing}</p>
+            <p className="text-sm leading-relaxed font-sans" style={{ color: 'var(--cx-text-secondary)' }}>{session.briefing}</p>
           </div>
           <div className="flex gap-3">
             <button
               onClick={onLaunch}
               disabled={isLocked}
-              className="flex-1 h-12 flex items-center justify-center gap-2 font-mono text-xs font-bold tracking-widest rounded-xl transition-all active:scale-95"
+              className="flex-1 h-12 flex items-center justify-center gap-2 font-sans text-xs font-bold tracking-widest rounded-xl transition-all active:scale-95"
               style={{
                 background: isLocked ? 'var(--cx-surface-hover)' : 'var(--cx-accent)',
                 color: isLocked ? 'var(--cx-text-muted)' : '#fff',
@@ -301,7 +301,7 @@ export default function DashVibe5() {
 
   if (loading) {
     return (
-      <div className="min-h-screen font-mono flex items-center justify-center" style={{ background: 'var(--cx-bg)' }}>
+      <div className="min-h-screen font-sans flex items-center justify-center" style={{ background: 'var(--cx-bg)' }}>
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4" style={{ borderColor: 'var(--cx-accent)', borderTopColor: 'transparent' }} />
           <p className="text-sm" style={{ color: 'var(--cx-text-secondary)' }}>Chargement du parcours...</p>
@@ -311,7 +311,7 @@ export default function DashVibe5() {
   }
 
   return (
-    <div className="min-h-screen font-mono selection:bg-orange-100" style={{ background: 'var(--cx-bg)', color: 'var(--cx-text)' }}>
+    <div className="min-h-screen font-sans selection:bg-[#F97316]/10" style={{ background: 'var(--cx-bg)', color: 'var(--cx-text)' }}>
       {/* Toast for newly unlocked sessions */}
       <Toast
         message={newlyUnlocked ? `Nouvelle session disponible : ${newlyUnlocked}` : ''}
@@ -325,9 +325,9 @@ export default function DashVibe5() {
           {/* Left: Avatar + Level */}
           <div className="flex items-center gap-3 sm:gap-6">
             <div className="relative">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-orange-100 border-2 border-orange-200 overflow-hidden flex items-center justify-center">
-                <User size={20} className="text-[#d97757] sm:hidden" />
-                <User size={28} className="text-[#d97757] hidden sm:block" />
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-[#F97316]/10 border-2 border-[#F97316]/20 overflow-hidden flex items-center justify-center">
+                <User size={20} className="text-[#F97316] sm:hidden" />
+                <User size={28} className="text-[#F97316] hidden sm:block" />
               </div>
               <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-green-500 border-2 border-white rounded-full flex items-center justify-center">
                 <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-white rounded-full animate-pulse" />
@@ -339,10 +339,10 @@ export default function DashVibe5() {
                 <BadgeTag label={`LVL ${levelNumber}`} variant="active" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
-                <div className="w-28 sm:w-56 h-2 sm:h-3 bg-orange-200 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: xpPercent }} className="h-full bg-[#d97757] rounded-full" />
+                <div className="w-28 sm:w-56 h-2 sm:h-3 bg-[#F97316]/20 rounded-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: xpPercent }} className="h-full bg-[#F97316] rounded-full" />
                 </div>
-                <span className="text-[10px] sm:text-xs font-bold text-stone-500">{xp}/{maxXp}</span>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-500">{xp}/{maxXp}</span>
               </div>
             </div>
           </div>
@@ -366,10 +366,10 @@ export default function DashVibe5() {
             </div>
             {isAdmin && (
               <>
-                <div className="h-12 w-px bg-stone-200" />
+                <div className="h-12 w-px bg-slate-200" />
                 <button
                   onClick={() => router.push('/admin')}
-                  className="flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-lg text-[#d97757] text-xs font-bold uppercase tracking-wider hover:bg-orange-100 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#F97316]/5 border border-[#F97316]/20 rounded-lg text-[#F97316] text-xs font-bold uppercase tracking-wider hover:bg-[#F97316]/10 transition-colors"
                 >
                   <Shield size={16} />
                   Admin

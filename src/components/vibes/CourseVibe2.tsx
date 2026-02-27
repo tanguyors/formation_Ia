@@ -70,7 +70,7 @@ const TypingTitle = ({ text }: { text: string }) => {
   return (
     <div className="flex items-center gap-2 mb-8">
       <motion.h1
-        className="text-4xl md:text-6xl font-mono font-bold tracking-tight text-white uppercase"
+        className="text-4xl md:text-6xl font-sans font-bold tracking-tight text-white uppercase"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -80,7 +80,7 @@ const TypingTitle = ({ text }: { text: string }) => {
       <motion.div
         animate={{ opacity: [1, 1, 0, 0] }}
         transition={{ duration: 1, repeat: Infinity, times: [0, 0.49, 0.5, 1] }}
-        className="w-4 h-10 md:w-6 md:h-14 bg-[#d97757] shadow-[0_0_15px_rgba(217,119,87,0.6)]"
+        className="w-4 h-10 md:w-6 md:h-14 bg-[#F97316] shadow-[0_0_15px_rgba(217,119,87,0.6)]"
       />
     </div>
   );
@@ -92,7 +92,7 @@ const TerminalBackground = () => (
     <div
       className="absolute inset-0 opacity-[0.03]"
       style={{
-        backgroundImage: `linear-gradient(#d97757 1px, transparent 1px), linear-gradient(90deg, #d97757 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(#F97316 1px, transparent 1px), linear-gradient(90deg, #F97316 1px, transparent 1px)`,
         backgroundSize: '40px 40px'
       }}
     />
@@ -172,20 +172,20 @@ function InteractiveQuiz({
             <CheckCircle2 size={40} className="text-green-400" />
           </div>
           <p className="text-xl text-white font-bold mb-2">Module validé avec succès !</p>
-          <p className="text-stone-400">Vous avez répondu correctement à toutes les questions.</p>
+          <p className="text-slate-400">Vous avez répondu correctement à toutes les questions.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-black/60 backdrop-blur-xl border border-[#d97757]/30 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="bg-black/60 backdrop-blur-xl border border-[#F97316]/30 rounded-2xl shadow-2xl overflow-hidden">
       {/* Quiz Header */}
-      <div className="flex items-center gap-3 px-8 py-4 bg-[#d97757]/10 border-b border-[#d97757]/20">
-        <HelpCircle size={20} className="text-[#d97757]" />
-        <span className="text-[#d97757] font-bold uppercase tracking-widest text-sm">Quiz de validation</span>
+      <div className="flex items-center gap-3 px-8 py-4 bg-[#F97316]/10 border-b border-[#F97316]/20">
+        <HelpCircle size={20} className="text-[#F97316]" />
+        <span className="text-[#F97316] font-bold uppercase tracking-widest text-sm">Quiz de validation</span>
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-stone-500 text-xs">
+          <span className="text-slate-500 text-xs">
             {Object.keys(selectedAnswers).length}/{questions.length} répondues
           </span>
         </div>
@@ -213,7 +213,7 @@ function InteractiveQuiz({
               <p className={cn("font-bold text-lg", passed ? "text-green-400" : "text-red-400")}>
                 {passed ? "Quiz réussi !" : "Quiz échoué"}
               </p>
-              <p className="text-stone-400 text-sm">
+              <p className="text-slate-400 text-sm">
                 Score : {score.score}/{score.total} — {passed ? "Toutes les réponses sont correctes !" : "Vous devez avoir tout juste pour valider."}
               </p>
             </div>
@@ -221,7 +221,7 @@ function InteractiveQuiz({
           {!passed && (
             <button
               onClick={handleRetry}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-stone-300 hover:bg-white/10 transition-all text-sm font-bold"
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:bg-white/10 transition-all text-sm font-bold"
             >
               <RotateCcw size={14} />
               Réessayer
@@ -251,7 +251,7 @@ function InteractiveQuiz({
                     ? result.isCorrect
                       ? "bg-green-500/20 text-green-400 border border-green-500/30"
                       : "bg-red-500/20 text-red-400 border border-red-500/30"
-                    : "bg-[#d97757]/20 text-[#d97757] border border-[#d97757]/30"
+                    : "bg-[#F97316]/20 text-[#F97316] border border-[#F97316]/30"
                 )}>
                   {result ? (
                     result.isCorrect ? <Check size={16} /> : <XCircle size={16} />
@@ -271,7 +271,7 @@ function InteractiveQuiz({
                   const isCorrectOption = result?.correctOptionId === option.id;
                   const isWrongSelection = result && isSelected && !result.isCorrect;
 
-                  let optionStyle = "border-white/10 hover:border-[#d97757]/30 hover:bg-white/5";
+                  let optionStyle = "border-white/10 hover:border-[#F97316]/30 hover:bg-white/5";
                   if (result) {
                     if (isCorrectOption) {
                       optionStyle = "border-green-500/40 bg-green-500/10";
@@ -281,7 +281,7 @@ function InteractiveQuiz({
                       optionStyle = "border-white/5 opacity-50";
                     }
                   } else if (isSelected) {
-                    optionStyle = "border-[#d97757]/50 bg-[#d97757]/10";
+                    optionStyle = "border-[#F97316]/50 bg-[#F97316]/10";
                   }
 
                   return (
@@ -304,7 +304,7 @@ function InteractiveQuiz({
                               ? "border-red-500 bg-red-500"
                               : "border-white/20"
                           : isSelected
-                            ? "border-[#d97757] bg-[#d97757]"
+                            ? "border-[#F97316] bg-[#F97316]"
                             : "border-white/20 group-hover:border-white/40"
                       )}>
                         {(isSelected || (result && isCorrectOption)) && (
@@ -319,10 +319,10 @@ function InteractiveQuiz({
                             ? "text-green-300 font-bold"
                             : isWrongSelection
                               ? "text-red-300 line-through"
-                              : "text-stone-500"
+                              : "text-slate-500"
                           : isSelected
                             ? "text-white"
-                            : "text-stone-300"
+                            : "text-slate-300"
                       )}>
                         {option.optionText}
                       </span>
@@ -351,8 +351,8 @@ function InteractiveQuiz({
             className={cn(
               "w-full py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-3",
               allAnswered
-                ? "bg-[#d97757] text-white hover:bg-[#c4674a] shadow-lg shadow-[#d97757]/30 active:scale-[0.98]"
-                : "bg-white/5 text-stone-500 border border-white/10 cursor-not-allowed"
+                ? "bg-[#F97316] text-white hover:bg-[#ea580c] shadow-lg shadow-[#F97316]/30 active:scale-[0.98]"
+                : "bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed"
             )}
           >
             {submitting ? (
@@ -425,24 +425,24 @@ export function SectionRendererV2({
 
   const getIcon = (type: Section['type']) => {
     switch (type) {
-      case 'text': return <BookOpen className="w-8 h-8 text-[#d97757]" />;
-      case 'code': return <Terminal className="w-8 h-8 text-[#d97757]" />;
-      case 'exercise': return <Gamepad2 className="w-8 h-8 text-[#d97757]" />;
-      case 'tip': return <Lightbulb className="w-8 h-8 text-[#d97757]" />;
+      case 'text': return <BookOpen className="w-8 h-8 text-[#F97316]" />;
+      case 'code': return <Terminal className="w-8 h-8 text-[#F97316]" />;
+      case 'exercise': return <Gamepad2 className="w-8 h-8 text-[#F97316]" />;
+      case 'tip': return <Lightbulb className="w-8 h-8 text-[#F97316]" />;
       case 'warning': return <AlertTriangle className="w-8 h-8 text-[#DC2626]" />;
-      case 'quiz': return <HelpCircle className="w-8 h-8 text-[#d97757]" />;
-      default: return <BookOpen className="w-8 h-8 text-[#d97757]" />;
+      case 'quiz': return <HelpCircle className="w-8 h-8 text-[#F97316]" />;
+      default: return <BookOpen className="w-8 h-8 text-[#F97316]" />;
     }
   };
 
   return (
-    <main className="relative h-screen w-full overflow-hidden font-mono text-[#E7E5E4] selection:bg-[#d97757]/30 selection:text-white">
+    <main className="relative h-screen w-full overflow-hidden font-sans text-[#E7E5E4] selection:bg-[#F97316]/30 selection:text-white">
       <TerminalBackground />
 
       {/* Progress Bar Top */}
-      <div className="fixed top-0 left-0 w-full h-1.5 bg-stone-900 z-50">
+      <div className="fixed top-0 left-0 w-full h-1.5 bg-slate-900 z-50">
         <motion.div
-          className="h-full bg-[#d97757] shadow-[0_0_15px_rgba(217,119,87,0.8)]"
+          className="h-full bg-[#F97316] shadow-[0_0_15px_rgba(217,119,87,0.8)]"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ type: 'spring', damping: 20, stiffness: 100 }}
@@ -452,19 +452,19 @@ export function SectionRendererV2({
       {/* Header Info */}
       <div className="fixed top-8 left-8 right-8 flex justify-between items-start z-40 pointer-events-none">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 border border-stone-800 rounded-sm pointer-events-auto">
-            <span className="text-[#d97757] animate-pulse uppercase text-sm font-bold tracking-widest">Live System</span>
-            <div className="w-2 h-2 rounded-full bg-[#d97757] shadow-[0_0_8px_#d97757]" />
+          <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 border border-slate-800 rounded-sm pointer-events-auto">
+            <span className="text-[#F97316] animate-pulse uppercase text-sm font-bold tracking-widest">Live System</span>
+            <div className="w-2 h-2 rounded-full bg-[#F97316] shadow-[0_0_8px_#F97316]" />
           </div>
-          <span className="text-stone-500 text-xs px-1">CODEX_AI_MODULE_01</span>
+          <span className="text-slate-500 text-xs px-1">CODEX_AI_MODULE_01</span>
         </div>
 
-        <div className="bg-black/40 backdrop-blur-md px-4 py-2 border border-stone-800 rounded-sm pointer-events-auto flex items-center gap-4">
-          <span className="text-stone-400 text-sm">SECTION {currentIndex + 1} / {sortedSections.length}</span>
-          <div className="w-px h-4 bg-stone-700" />
+        <div className="bg-black/40 backdrop-blur-md px-4 py-2 border border-slate-800 rounded-sm pointer-events-auto flex items-center gap-4">
+          <span className="text-slate-400 text-sm">SECTION {currentIndex + 1} / {sortedSections.length}</span>
+          <div className="w-px h-4 bg-slate-700" />
           <div className="flex gap-1">
-            <div className={cn("w-2 h-2 rounded-full", currentIndex > 0 ? "bg-[#d97757]" : "bg-stone-800")} />
-            <div className={cn("w-2 h-2 rounded-full", currentIndex < sortedSections.length - 1 ? "bg-stone-600 animate-pulse" : "bg-stone-800")} />
+            <div className={cn("w-2 h-2 rounded-full", currentIndex > 0 ? "bg-[#F97316]" : "bg-slate-800")} />
+            <div className={cn("w-2 h-2 rounded-full", currentIndex < sortedSections.length - 1 ? "bg-slate-600 animate-pulse" : "bg-slate-800")} />
           </div>
         </div>
       </div>
@@ -482,10 +482,10 @@ export function SectionRendererV2({
           >
             {/* Section Badge */}
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-[#d97757]/10 border border-[#d97757]/20 rounded-xl shadow-[0_0_20px_rgba(217,119,87,0.1)]">
+              <div className="p-3 bg-[#F97316]/10 border border-[#F97316]/20 rounded-xl shadow-[0_0_20px_rgba(217,119,87,0.1)]">
                 {getIcon(currentSection.type)}
               </div>
-              <span className="text-[#d97757] text-xl font-bold uppercase tracking-[0.2em]">
+              <span className="text-[#F97316] text-xl font-bold uppercase tracking-[0.2em]">
                 {currentSection.type}
               </span>
             </div>
@@ -496,17 +496,17 @@ export function SectionRendererV2({
             {/* Dynamic Content Rendering */}
             <div className="relative group">
               {currentSection.type === 'code' ? (
-                <div className="relative bg-[#1C1917] border border-[#d97757]/30 rounded-2xl overflow-hidden shadow-2xl group-hover:border-[#d97757]/60 transition-colors duration-500">
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-stone-800 bg-black/20">
+                <div className="relative bg-[#1C1917] border border-[#F97316]/30 rounded-2xl overflow-hidden shadow-2xl group-hover:border-[#F97316]/60 transition-colors duration-500">
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-black/20">
                     <div className="flex gap-2">
                       <div className="w-3 h-3 rounded-full bg-red-500/30" />
                       <div className="w-3 h-3 rounded-full bg-orange-500/30" />
                       <div className="w-3 h-3 rounded-full bg-green-500/30" />
                     </div>
-                    <span className="text-stone-500 text-xs tracking-widest uppercase">{currentSection.codeLanguage || 'terminal'}</span>
+                    <span className="text-slate-500 text-xs tracking-widest uppercase">{currentSection.codeLanguage || 'terminal'}</span>
                     <button
                       onClick={() => handleCopy(currentSection.content)}
-                      className="p-2 hover:bg-[#d97757]/10 rounded-lg text-stone-400 hover:text-[#d97757] transition-all"
+                      className="p-2 hover:bg-[#F97316]/10 rounded-lg text-slate-400 hover:text-[#F97316] transition-all"
                     >
                       {copied ? <Check size={18} className="text-[#16A34A]" /> : <Copy size={18} />}
                     </button>
@@ -516,11 +516,11 @@ export function SectionRendererV2({
                   </pre>
                 </div>
               ) : currentSection.type === 'exercise' ? (
-                <div className="bg-black/60 backdrop-blur-xl border border-[#d97757]/30 rounded-2xl shadow-2xl overflow-hidden">
-                  <div className="flex items-center gap-3 px-8 py-4 bg-[#d97757]/10 border-b border-[#d97757]/20">
-                    <Command size={20} className="text-[#d97757]" />
-                    <span className="text-[#d97757] font-bold uppercase tracking-widest text-sm">Mission Active</span>
-                    <div className="ml-auto w-2 h-2 rounded-full bg-[#d97757] animate-pulse shadow-[0_0_8px_#d97757]" />
+                <div className="bg-black/60 backdrop-blur-xl border border-[#F97316]/30 rounded-2xl shadow-2xl overflow-hidden">
+                  <div className="flex items-center gap-3 px-8 py-4 bg-[#F97316]/10 border-b border-[#F97316]/20">
+                    <Command size={20} className="text-[#F97316]" />
+                    <span className="text-[#F97316] font-bold uppercase tracking-widest text-sm">Mission Active</span>
+                    <div className="ml-auto w-2 h-2 rounded-full bg-[#F97316] animate-pulse shadow-[0_0_8px_#F97316]" />
                   </div>
                   <div className="p-8 space-y-4">
                     <ReactMarkdown
@@ -528,14 +528,14 @@ export function SectionRendererV2({
                       components={{
                         h2: ({ children }) => (
                           <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                            <span className="text-[#d97757]">&gt;</span> {children}
+                            <span className="text-[#F97316]">&gt;</span> {children}
                           </h2>
                         ),
                         h3: ({ children }) => (
-                          <h3 className="text-lg font-bold text-[#d97757] uppercase tracking-widest mt-6 mb-3">{children}</h3>
+                          <h3 className="text-lg font-bold text-[#F97316] uppercase tracking-widest mt-6 mb-3">{children}</h3>
                         ),
                         p: ({ children }) => (
-                          <p className="text-lg text-stone-300 leading-relaxed mb-3">{children}</p>
+                          <p className="text-lg text-slate-300 leading-relaxed mb-3">{children}</p>
                         ),
                         ol: ({ children }) => (
                           <div className="grid gap-3 my-4">{children}</div>
@@ -545,23 +545,23 @@ export function SectionRendererV2({
                         ),
                         li: ({ children }) => (
                           <div className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-xl p-4">
-                            <div className="mt-0.5 shrink-0 w-6 h-6 rounded-full bg-[#d97757]/20 border border-[#d97757]/30 flex items-center justify-center">
-                              <div className="w-2 h-2 rounded-full bg-[#d97757]" />
+                            <div className="mt-0.5 shrink-0 w-6 h-6 rounded-full bg-[#F97316]/20 border border-[#F97316]/30 flex items-center justify-center">
+                              <div className="w-2 h-2 rounded-full bg-[#F97316]" />
                             </div>
-                            <span className="text-stone-300 text-base leading-relaxed flex-1">{children}</span>
+                            <span className="text-slate-300 text-base leading-relaxed flex-1">{children}</span>
                           </div>
                         ),
                         strong: ({ children }) => <strong className="text-white font-bold">{children}</strong>,
-                        code: ({ children }) => <code className="bg-[#d97757]/15 text-[#FED7AA] px-2 py-0.5 rounded text-sm border border-[#d97757]/20">{children}</code>,
+                        code: ({ children }) => <code className="bg-[#F97316]/15 text-[#FED7AA] px-2 py-0.5 rounded text-sm border border-[#F97316]/20">{children}</code>,
                         table: ({ children }) => (
                           <div className="overflow-x-auto my-6 rounded-2xl border border-white/10 bg-white/5 shadow-xl">
                             <table className="w-full text-left">{children}</table>
                           </div>
                         ),
-                        thead: ({ children }) => <thead className="bg-[#d97757]/10 border-b border-[#d97757]/20">{children}</thead>,
-                        th: ({ children }) => <th className="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#d97757]">{children}</th>,
+                        thead: ({ children }) => <thead className="bg-[#F97316]/10 border-b border-[#F97316]/20">{children}</thead>,
+                        th: ({ children }) => <th className="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#F97316]">{children}</th>,
                         tr: ({ children }) => <tr className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">{children}</tr>,
-                        td: ({ children }) => <td className="px-6 py-3 text-sm text-stone-300">{children}</td>,
+                        td: ({ children }) => <td className="px-6 py-3 text-sm text-slate-300">{children}</td>,
                       }}
                     >
                       {currentSection.content}
@@ -569,22 +569,22 @@ export function SectionRendererV2({
                   </div>
                 </div>
               ) : currentSection.type === 'tip' ? (
-                <div className="relative overflow-hidden bg-orange-50/5 border-2 border-[#d97757]/20 p-10 rounded-3xl shadow-2xl">
+                <div className="relative overflow-hidden bg-orange-50/5 border-2 border-[#F97316]/20 p-10 rounded-3xl shadow-2xl">
                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                      <Lightbulb size={120} className="text-[#d97757]" />
+                      <Lightbulb size={120} className="text-[#F97316]" />
                    </div>
                    <div className="relative z-10 space-y-4">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        p: ({ children }) => <p className="text-lg md:text-xl leading-relaxed text-stone-300 mb-3">{children}</p>,
-                        strong: ({ children }) => <strong className="text-[#d97757] font-extrabold">{children}</strong>,
-                        code: ({ children }) => <code className="bg-[#d97757]/15 text-[#FED7AA] px-2 py-1 rounded-lg text-base border border-[#d97757]/20 block my-4 p-4">{children}</code>,
+                        p: ({ children }) => <p className="text-lg md:text-xl leading-relaxed text-slate-300 mb-3">{children}</p>,
+                        strong: ({ children }) => <strong className="text-[#F97316] font-extrabold">{children}</strong>,
+                        code: ({ children }) => <code className="bg-[#F97316]/15 text-[#FED7AA] px-2 py-1 rounded-lg text-base border border-[#F97316]/20 block my-4 p-4">{children}</code>,
                         ul: ({ children }) => <div className="grid gap-3 my-4">{children}</div>,
                         li: ({ children }) => (
                           <div className="flex items-start gap-3 bg-white/5 rounded-xl p-4 border border-white/10">
-                            <Lightbulb size={16} className="text-[#d97757] mt-1 shrink-0" />
-                            <span className="text-stone-300 text-base leading-relaxed">{children}</span>
+                            <Lightbulb size={16} className="text-[#F97316] mt-1 shrink-0" />
+                            <span className="text-slate-300 text-base leading-relaxed">{children}</span>
                           </div>
                         ),
                         table: ({ children }) => (
@@ -592,10 +592,10 @@ export function SectionRendererV2({
                             <table className="w-full text-left">{children}</table>
                           </div>
                         ),
-                        thead: ({ children }) => <thead className="bg-[#d97757]/10 border-b border-[#d97757]/20">{children}</thead>,
-                        th: ({ children }) => <th className="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#d97757]">{children}</th>,
+                        thead: ({ children }) => <thead className="bg-[#F97316]/10 border-b border-[#F97316]/20">{children}</thead>,
+                        th: ({ children }) => <th className="px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#F97316]">{children}</th>,
                         tr: ({ children }) => <tr className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">{children}</tr>,
-                        td: ({ children }) => <td className="px-6 py-3 text-sm text-stone-300">{children}</td>,
+                        td: ({ children }) => <td className="px-6 py-3 text-sm text-slate-300">{children}</td>,
                       }}
                     >
                       {currentSection.content}
@@ -646,8 +646,8 @@ export function SectionRendererV2({
                   />
                 ) : (
                   <div className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl p-8 text-center">
-                    <HelpCircle size={48} className="text-stone-600 mx-auto mb-4" />
-                    <p className="text-stone-400 text-lg">Quiz en cours de chargement...</p>
+                    <HelpCircle size={48} className="text-slate-600 mx-auto mb-4" />
+                    <p className="text-slate-400 text-lg">Quiz en cours de chargement...</p>
                   </div>
                 )
               ) : (
@@ -657,25 +657,25 @@ export function SectionRendererV2({
                     components={{
                       h1: ({ children }) => (
                         <div className="flex items-center gap-4 mb-8 mt-4">
-                          <div className="w-1.5 h-10 bg-[#d97757] rounded-full shadow-[0_0_10px_rgba(217,119,87,0.5)]" />
+                          <div className="w-1.5 h-10 bg-[#F97316] rounded-full shadow-[0_0_10px_rgba(217,119,87,0.5)]" />
                           <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">{children}</h1>
                         </div>
                       ),
                       h2: ({ children }) => (
                         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-6 mt-8">
                           <div className="flex items-center gap-3 mb-1">
-                            <div className="w-2 h-2 rounded-full bg-[#d97757] shadow-[0_0_8px_#d97757]" />
+                            <div className="w-2 h-2 rounded-full bg-[#F97316] shadow-[0_0_8px_#F97316]" />
                             <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">{children}</h2>
                           </div>
                         </div>
                       ),
                       h3: ({ children }) => (
-                        <h3 className="text-xl font-bold text-[#d97757] uppercase tracking-widest mt-6 mb-3 flex items-center gap-3">
-                          <span className="text-[#d97757]/40">{'///'}</span> {children}
+                        <h3 className="text-xl font-bold text-[#F97316] uppercase tracking-widest mt-6 mb-3 flex items-center gap-3">
+                          <span className="text-[#F97316]/40">{'///'}</span> {children}
                         </h3>
                       ),
                       p: ({ children }) => (
-                        <p className="text-lg md:text-xl leading-relaxed text-stone-300 mb-4">{children}</p>
+                        <p className="text-lg md:text-xl leading-relaxed text-slate-300 mb-4">{children}</p>
                       ),
                       ul: ({ children }) => (
                         <div className="grid gap-3 my-6">{children}</div>
@@ -684,22 +684,22 @@ export function SectionRendererV2({
                         <div className="grid gap-3 my-6">{children}</div>
                       ),
                       li: ({ children }) => (
-                        <div className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-xl p-4 hover:border-[#d97757]/30 transition-colors">
-                          <div className="mt-1 shrink-0 w-6 h-6 rounded-lg bg-[#d97757]/20 flex items-center justify-center">
-                            <ChevronRight size={14} className="text-[#d97757]" />
+                        <div className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-xl p-4 hover:border-[#F97316]/30 transition-colors">
+                          <div className="mt-1 shrink-0 w-6 h-6 rounded-lg bg-[#F97316]/20 flex items-center justify-center">
+                            <ChevronRight size={14} className="text-[#F97316]" />
                           </div>
-                          <span className="text-lg text-stone-300 leading-relaxed flex-1">{children}</span>
+                          <span className="text-lg text-slate-300 leading-relaxed flex-1">{children}</span>
                         </div>
                       ),
                       strong: ({ children }) => (
-                        <strong className="text-[#d97757] font-extrabold">{children}</strong>
+                        <strong className="text-[#F97316] font-extrabold">{children}</strong>
                       ),
                       code: ({ children }) => (
-                        <code className="bg-[#d97757]/15 text-[#FED7AA] px-2 py-0.5 rounded-md text-[0.9em] border border-[#d97757]/20">{children}</code>
+                        <code className="bg-[#F97316]/15 text-[#FED7AA] px-2 py-0.5 rounded-md text-[0.9em] border border-[#F97316]/20">{children}</code>
                       ),
                       blockquote: ({ children }) => (
-                        <div className="border-l-4 border-[#d97757] bg-[#d97757]/5 rounded-r-xl p-6 my-6">
-                          <div className="text-stone-300 text-lg italic">{children}</div>
+                        <div className="border-l-4 border-[#F97316] bg-[#F97316]/5 rounded-r-xl p-6 my-6">
+                          <div className="text-slate-300 text-lg italic">{children}</div>
                         </div>
                       ),
                       table: ({ children }) => (
@@ -708,16 +708,16 @@ export function SectionRendererV2({
                         </div>
                       ),
                       thead: ({ children }) => (
-                        <thead className="bg-[#d97757]/10 border-b border-[#d97757]/20">{children}</thead>
+                        <thead className="bg-[#F97316]/10 border-b border-[#F97316]/20">{children}</thead>
                       ),
                       th: ({ children }) => (
-                        <th className="px-6 py-4 text-sm font-bold uppercase tracking-widest text-[#d97757]">{children}</th>
+                        <th className="px-6 py-4 text-sm font-bold uppercase tracking-widest text-[#F97316]">{children}</th>
                       ),
                       tr: ({ children }) => (
                         <tr className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">{children}</tr>
                       ),
                       td: ({ children }) => (
-                        <td className="px-6 py-4 text-base text-stone-300">{children}</td>
+                        <td className="px-6 py-4 text-base text-slate-300">{children}</td>
                       ),
                     }}
                   >
@@ -732,7 +732,7 @@ export function SectionRendererV2({
 
       {/* Floating Navigation Bar */}
       <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-4 bg-black/60 backdrop-blur-2xl px-6 py-4 rounded-full border border-stone-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center gap-4 bg-black/60 backdrop-blur-2xl px-6 py-4 rounded-full border border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           <motion.button
             whileHover={{ scale: 1.1, x: -4 }}
             whileTap={{ scale: 0.95 }}
@@ -741,14 +741,14 @@ export function SectionRendererV2({
             className={cn(
               "p-4 rounded-full transition-all duration-300",
               currentIndex === 0
-                ? "text-stone-700 cursor-not-allowed"
-                : "text-white hover:bg-stone-800 hover:text-[#d97757]"
+                ? "text-slate-700 cursor-not-allowed"
+                : "text-white hover:bg-slate-800 hover:text-[#F97316]"
             )}
           >
             <ChevronLeft size={32} />
           </motion.button>
 
-          <div className="h-8 w-px bg-stone-800 mx-2" />
+          <div className="h-8 w-px bg-slate-800 mx-2" />
 
           <div className="flex gap-2 px-2">
             {sortedSections.map((_, idx) => (
@@ -758,14 +758,14 @@ export function SectionRendererV2({
                 className={cn(
                   "h-2 rounded-full transition-all duration-500",
                   idx === currentIndex
-                    ? "w-12 bg-[#d97757] shadow-[0_0_10px_#d97757]"
-                    : "w-2 bg-stone-800 hover:bg-stone-600"
+                    ? "w-12 bg-[#F97316] shadow-[0_0_10px_#F97316]"
+                    : "w-2 bg-slate-800 hover:bg-slate-600"
                 )}
               />
             ))}
           </div>
 
-          <div className="h-8 w-px bg-stone-800 mx-2" />
+          <div className="h-8 w-px bg-slate-800 mx-2" />
 
           <motion.button
             whileHover={{ scale: 1.1, x: 4 }}
@@ -775,8 +775,8 @@ export function SectionRendererV2({
             className={cn(
               "flex items-center gap-3 p-4 rounded-full transition-all duration-300",
               currentIndex === sortedSections.length - 1
-                ? "text-stone-700 cursor-not-allowed"
-                : "text-white hover:bg-stone-800 hover:text-[#d97757]"
+                ? "text-slate-700 cursor-not-allowed"
+                : "text-white hover:bg-slate-800 hover:text-[#F97316]"
             )}
           >
             {currentIndex === sortedSections.length - 1 ? (
@@ -791,15 +791,15 @@ export function SectionRendererV2({
       {/* Side Decorative Metadata */}
       <div className="fixed right-12 top-1/2 -translate-y-1/2 flex-col gap-8 z-0 opacity-20 hidden lg:flex">
         <div className="flex flex-col gap-2">
-          <span className="text-[10px] uppercase font-bold text-stone-500 tracking-tighter">Memory Address</span>
-          <span className="text-sm text-stone-300">0x0F4A92B1</span>
+          <span className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Memory Address</span>
+          <span className="text-sm text-slate-300">0x0F4A92B1</span>
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-[10px] uppercase font-bold text-stone-500 tracking-tighter">Bitrate</span>
-          <span className="text-sm text-stone-300">128.4 KB/s</span>
+          <span className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Bitrate</span>
+          <span className="text-sm text-slate-300">128.4 KB/s</span>
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-[10px] uppercase font-bold text-stone-500 tracking-tighter">Connection</span>
+          <span className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">Connection</span>
           <span className="text-sm text-green-500">ENCRYPTED</span>
         </div>
       </div>

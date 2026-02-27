@@ -113,7 +113,7 @@ const MarqueeLogos = ({ items, reverse = false, speed = 35 }: { items: string[],
             <img
               src={logo}
               alt="Logo"
-              className="h-10 w-auto grayscale opacity-25 group-hover/logo:grayscale-0 group-hover/logo:opacity-100 transition-all duration-500 cursor-pointer relative z-10"
+              className="h-10 w-auto opacity-40 hover:opacity-100 transition-all duration-500 cursor-pointer relative z-10"
             />
           </motion.div>
         ))}
