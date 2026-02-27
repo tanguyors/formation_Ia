@@ -1,5 +1,5 @@
-import LandingVibe6 from "@/components/vibes/LandingVibe6";
+import LandingVibeOption1 from "@/components/vibes/LandingVibeOption1";
 
 export default function Home() {
-  return <LandingVibe6 />;
+  return <LandingVibeOption1 />;
 }
