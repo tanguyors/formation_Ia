@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum Level {
+  OPERATEUR
+  CONNECTEUR
+  ARCHITECTE
+  SENTINELLE
+}
+
+enum ProgressStatus {
+  LOCKED
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ─── Users ───────────────────────────────────────────────────────────────────
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  email       String   @unique
+  displayName String?  @map("display_name")
+  avatarUrl   String?  @map("avatar_url")
+  role        Role     @default(STUDENT)
+  level       Level    @default(OPERATEUR)
+  xp          Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  invitationsCreated Invitation[]
+  progress           UserProgress[]
+  badges             UserBadge[]
+
+  @@map("users")
+}
+
+// ─── Invitations ─────────────────────────────────────────────────────────────
+
+model Invitation {
+  id        String    @id @default(uuid()) @db.Uuid
+  email     String    @unique
+  code      String    @unique @db.VarChar(8)
+  used      Boolean   @default(false)
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  expiresAt DateTime? @map("expires_at")
+
+  // Relations
+  createdById String @map("created_by_id") @db.Uuid
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([code])
+  @@index([email])
+  @@map("invitations")
+}
+
+// ─── Sessions (training sessions) ────────────────────────────────────────────
+
+model Session {
+  id              String   @id @default(uuid()) @db.Uuid
+  week            Int
+  day             Int
+  sessionNumber   Int      @unique @map("session_number")
+  title           String
+  description     String?
+  briefing        String   @db.Text
+  objectives      String[]
+  date            DateTime
+  durationMinutes Int      @default(90) @map("duration_minutes")
+  videoUrl        String?  @map("video_url")
+  isPublished     Boolean  @default(false) @map("is_published")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  progress UserProgress[]
+
+  @@index([week, day])
+  @@index([sessionNumber])
+  @@map("sessions")
+}
+
+// ─── User Progress ───────────────────────────────────────────────────────────
+
+model UserProgress {
+  id          String         @id @default(uuid()) @db.Uuid
+  status      ProgressStatus @default(LOCKED)
+  xpEarned    Int            @default(0) @map("xp_earned")
+  completedAt DateTime?      @map("completed_at")
+  notes       String?        @db.Text
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  userId    String  @map("user_id") @db.Uuid
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String  @map("session_id") @db.Uuid
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sessionId])
+  @@index([userId])
+  @@index([sessionId])
+  @@map("user_progress")
+}
+
+// ─── Badges ──────────────────────────────────────────────────────────────────
+
+model Badge {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  description String
+  icon        String
+  condition   String
+  xpReward    Int      @default(0) @map("xp_reward")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  users UserBadge[]
+
+  @@map("badges")
+}
+
+// ─── User Badges ─────────────────────────────────────────────────────────────
+
+model UserBadge {
+  id       String   @id @default(uuid()) @db.Uuid
+  earnedAt DateTime @default(now()) @map("earned_at")
+
+  // Relations
+  userId  String @map("user_id") @db.Uuid
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId String @map("badge_id") @db.Uuid
+  badge   Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([badgeId])
+  @@map("user_badges")
+}

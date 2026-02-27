@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* CODEX_AI Design Tokens — Light */
+  --cx-bg: #FFFCFA;
+  --cx-bg-alt: #FFF7ED;
+  --cx-surface: #ffffff;
+  --cx-surface-hover: #FFF7ED;
+  --cx-border: #e7e5e4;
+  --cx-border-strong: #d6d3d1;
+  --cx-text: #1c1917;
+  --cx-text-secondary: #78716c;
+  --cx-text-muted: #a8a29e;
+  --cx-accent: #d97757;
+  --cx-accent-hover: #c4674a;
+  --cx-accent-bg: rgba(217, 119, 87, 0.08);
+  --cx-accent-border: rgba(217, 119, 87, 0.25);
+  --cx-green: #16a34a;
+  --cx-green-bg: #f0fdf4;
+  --cx-green-border: #bbf7d0;
+  --cx-sidebar: #FFF7ED;
+  --cx-card-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --cx-glow: rgba(217, 119, 87, 0.2);
+}
+
+html.dark {
+  /* CODEX_AI Design Tokens — Dark */
+  --cx-bg: #0c0a09;
+  --cx-bg-alt: #1c1917;
+  --cx-surface: #1c1917;
+  --cx-surface-hover: #292524;
+  --cx-border: #292524;
+  --cx-border-strong: #44403c;
+  --cx-text: #fafaf9;
+  --cx-text-secondary: #a8a29e;
+  --cx-text-muted: #78716c;
+  --cx-accent: #e8956f;
+  --cx-accent-hover: #d97757;
+  --cx-accent-bg: rgba(232, 149, 111, 0.12);
+  --cx-accent-border: rgba(232, 149, 111, 0.3);
+  --cx-green: #4ade80;
+  --cx-green-bg: rgba(74, 222, 128, 0.1);
+  --cx-green-border: rgba(74, 222, 128, 0.25);
+  --cx-sidebar: #1c1917;
+  --cx-card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --cx-glow: rgba(232, 149, 111, 0.3);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--cx-bg);
+  color: var(--cx-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Animated connector lines */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -20; }
+}
+.connector-line {
+  stroke-dasharray: 8 6;
+  animation: dash-flow 1.5s linear infinite;
+}
+.connector-line-completed {
+  stroke-dasharray: none;
+  animation: none;
+}
