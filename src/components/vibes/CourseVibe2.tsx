@@ -442,26 +442,71 @@ function ChapterNavbar({ chapters, onChapterClick, activeIndex }: {
   activeIndex: number;
 }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const hasDragged = useRef(false);
 
+  // Auto-scroll active chapter into view
   useEffect(() => {
+    if (isDragging.current) return;
     const activeElement = scrollContainerRef.current?.querySelector('[data-active="true"]');
     if (activeElement) {
       activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   }, [activeIndex]);
 
+  // Drag-to-scroll handlers
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+
+    const onMouseDown = (e: MouseEvent) => {
+      isDragging.current = true;
+      hasDragged.current = false;
+      startX.current = e.pageX - el.offsetLeft;
+      scrollLeft.current = el.scrollLeft;
+      el.style.cursor = 'grabbing';
+      el.style.userSelect = 'none';
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX.current) * 1.5;
+      if (Math.abs(walk) > 3) hasDragged.current = true;
+      el.scrollLeft = scrollLeft.current - walk;
+    };
+
+    const onMouseUp = () => {
+      isDragging.current = false;
+      el.style.cursor = 'grab';
+      el.style.userSelect = '';
+    };
+
+    el.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      el.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
   if (chapters.length <= 1) return null;
 
   return (
-    <div className="fixed top-14 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 pointer-events-none max-w-[50vw]">
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="pointer-events-auto flex items-center max-w-full lg:max-w-4xl bg-white/70 backdrop-blur-md border border-slate-200 rounded-full shadow-lg p-1 overflow-hidden"
+        className="pointer-events-auto flex items-center bg-white/80 backdrop-blur-md border border-slate-200 rounded-full shadow-lg p-1 overflow-hidden"
       >
         <div
           ref={scrollContainerRef}
-          className="flex items-center gap-1 overflow-x-auto px-1 py-0.5 scroll-smooth [&::-webkit-scrollbar]:hidden"
+          className="flex items-center gap-1 overflow-x-auto px-1 py-0.5 [&::-webkit-scrollbar]:hidden cursor-grab"
           style={{ scrollbarWidth: 'none' }}
         >
           {chapters.map((chapter, idx) => {
@@ -472,26 +517,28 @@ function ChapterNavbar({ chapters, onChapterClick, activeIndex }: {
             return (
               <button
                 key={chapter.index}
-                onClick={() => onChapterClick(chapter.index)}
+                onClick={() => { if (!hasDragged.current) onChapterClick(chapter.index); }}
                 data-active={isCurrent}
                 className={cn(
-                  "relative flex items-center gap-2 px-4 py-1.5 rounded-full whitespace-nowrap transition-all duration-300 group",
+                  "relative flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap transition-all duration-300 group",
                   isCurrent
                     ? "bg-[#F97316] text-white shadow-md shadow-orange-200"
-                    : "bg-transparent hover:bg-slate-50 text-slate-600 hover:text-slate-900"
+                    : isCompleted
+                      ? "bg-orange-50 text-[#F97316] hover:bg-orange-100"
+                      : "bg-transparent hover:bg-slate-50 text-slate-600 hover:text-slate-900"
                 )}
               >
                 <div className="flex items-center justify-center">
                   {isCompleted ? (
-                    <Check className={cn("w-3.5 h-3.5", isCurrent ? "text-white" : "text-[#F97316]")} strokeWidth={3} />
+                    <Check className={cn("w-3 h-3", isCurrent ? "text-white" : "text-[#F97316]")} strokeWidth={3} />
                   ) : (
-                    <span className={cn("text-[10px] font-bold tracking-widest uppercase", isCurrent ? "text-orange-100" : "text-slate-400 group-hover:text-slate-500")}>
+                    <span className={cn("text-[10px] font-bold", isCurrent ? "text-orange-100" : "text-slate-400")}>
                       {chapterNumber}
                     </span>
                   )}
                 </div>
-                <span className={cn("text-xs font-semibold tracking-tight", isCurrent ? "text-white" : "text-slate-700")}>
-                  {chapter.title.length > 30 ? chapter.title.slice(0, 28) + '…' : chapter.title}
+                <span className={cn("text-[11px] font-medium tracking-tight", isCurrent ? "text-white" : "text-slate-700")}>
+                  {chapter.title.length > 18 ? chapter.title.slice(0, 16) + '…' : chapter.title}
                 </span>
               </button>
             );
@@ -543,54 +590,6 @@ export function SectionRendererV2({
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setTimeout(() => { isScrolling.current = false; }, 800);
   }, [sortedSections.length]);
-
-  // Smart wheel handler: snap for short sections, free scroll for tall ones
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (isScrolling.current) { e.preventDefault(); return; }
-
-      const currentEl = container.querySelector('[data-active="true"]');
-      const currentIdx = currentEl ? Number(currentEl.getAttribute('data-index')) : 0;
-      const sectionEl = document.getElementById(`immersive-section-${currentIdx}`);
-      if (!sectionEl) return;
-
-      const viewportH = container.clientHeight;
-      const sectionH = sectionEl.offsetHeight;
-      const isTall = sectionH > viewportH + 20; // 20px tolerance
-
-      if (!isTall) {
-        // Short section: full snap (one scroll = next page)
-        e.preventDefault();
-        if (e.deltaY > 0 && currentIdx < sortedSections.length - 1) {
-          scrollToSection(currentIdx + 1);
-        } else if (e.deltaY < 0 && currentIdx > 0) {
-          scrollToSection(currentIdx - 1);
-        }
-        return;
-      }
-
-      // Tall section: allow free scroll, snap at boundaries
-      const sectionRect = sectionEl.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const atBottom = sectionRect.bottom <= containerRect.bottom + 15;
-      const atTop = sectionRect.top >= containerRect.top - 15;
-
-      if (e.deltaY > 0 && atBottom && currentIdx < sortedSections.length - 1) {
-        e.preventDefault();
-        scrollToSection(currentIdx + 1);
-      } else if (e.deltaY < 0 && atTop && currentIdx > 0) {
-        e.preventDefault();
-        scrollToSection(currentIdx - 1);
-      }
-      // Otherwise: let normal scroll happen inside the tall section
-    };
-
-    container.addEventListener('wheel', handleWheel, { passive: false });
-    return () => container.removeEventListener('wheel', handleWheel);
-  }, [scrollToSection, sortedSections.length]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -667,7 +666,6 @@ export function SectionRendererV2({
         </div>
       </div>
 
-      {/* Sections — min-h-screen, snap for short, free scroll for tall */}
       {sortedSections.map((section, idx) => (
         <div
           key={section.id}
