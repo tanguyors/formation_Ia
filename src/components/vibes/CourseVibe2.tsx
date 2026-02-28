@@ -428,6 +428,80 @@ function ImmersiveSection({ section, index, sessionId, quizData, onQuizPassed, i
   );
 }
 
+// ── Chapter Navigation Bar ──────────────────────────────────
+
+interface ChapterInfo {
+  index: number;
+  title: string;
+  isActive: boolean;
+}
+
+function ChapterNavbar({ chapters, onChapterClick, activeIndex }: {
+  chapters: ChapterInfo[];
+  onChapterClick: (index: number) => void;
+  activeIndex: number;
+}) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const activeElement = scrollContainerRef.current?.querySelector('[data-active="true"]');
+    if (activeElement) {
+      activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [activeIndex]);
+
+  if (chapters.length <= 1) return null;
+
+  return (
+    <div className="fixed top-14 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
+      <motion.nav
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="pointer-events-auto flex items-center max-w-full lg:max-w-4xl bg-white/70 backdrop-blur-md border border-slate-200 rounded-full shadow-lg p-1 overflow-hidden"
+      >
+        <div
+          ref={scrollContainerRef}
+          className="flex items-center gap-1 overflow-x-auto px-1 py-0.5 scroll-smooth [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {chapters.map((chapter, idx) => {
+            const isCompleted = !chapter.isActive && activeIndex > chapter.index;
+            const isCurrent = chapter.isActive;
+            const chapterNumber = (idx + 1).toString().padStart(2, '0');
+
+            return (
+              <button
+                key={chapter.index}
+                onClick={() => onChapterClick(chapter.index)}
+                data-active={isCurrent}
+                className={cn(
+                  "relative flex items-center gap-2 px-4 py-1.5 rounded-full whitespace-nowrap transition-all duration-300 group",
+                  isCurrent
+                    ? "bg-[#F97316] text-white shadow-md shadow-orange-200"
+                    : "bg-transparent hover:bg-slate-50 text-slate-600 hover:text-slate-900"
+                )}
+              >
+                <div className="flex items-center justify-center">
+                  {isCompleted ? (
+                    <Check className={cn("w-3.5 h-3.5", isCurrent ? "text-white" : "text-[#F97316]")} strokeWidth={3} />
+                  ) : (
+                    <span className={cn("text-[10px] font-bold tracking-widest uppercase", isCurrent ? "text-orange-100" : "text-slate-400 group-hover:text-slate-500")}>
+                      {chapterNumber}
+                    </span>
+                  )}
+                </div>
+                <span className={cn("text-xs font-semibold tracking-tight", isCurrent ? "text-white" : "text-slate-700")}>
+                  {chapter.title.length > 30 ? chapter.title.slice(0, 28) + '…' : chapter.title}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </motion.nav>
+    </div>
+  );
+}
+
 // ── Main Export ──────────────────────────────────────────────
 
 export function SectionRendererV2({
@@ -442,6 +516,23 @@ export function SectionRendererV2({
   const sortedSections = useMemo(() =>
     [...sections].filter(s => s.type !== 'quiz').sort((a, b) => a.sortOrder - b.sortOrder),
   [sections]);
+
+  // Compute chapters from sections with titles
+  const chapters = useMemo(() => {
+    const chapterIndices = sortedSections
+      .map((s, idx) => ({ index: idx, title: s.title }))
+      .filter(s => s.title !== null);
+
+    return chapterIndices.map((ch, i) => {
+      const nextChapterIndex = i < chapterIndices.length - 1 ? chapterIndices[i + 1].index : sortedSections.length;
+      const isActive = activeIndex >= ch.index && activeIndex < nextChapterIndex;
+      return {
+        index: ch.index,
+        title: ch.title as string,
+        isActive,
+      };
+    });
+  }, [sortedSections, activeIndex]);
 
   const scrollToSection = useCallback((idx: number) => {
     if (idx < 0 || idx >= sortedSections.length) return;
@@ -547,6 +638,9 @@ export function SectionRendererV2({
       ref={containerRef}
       className="relative w-full h-screen font-sans bg-white text-black overflow-y-auto"
     >
+      {/* Chapter navigation bar — fixed top */}
+      <ChapterNavbar chapters={chapters} onChapterClick={scrollToSection} activeIndex={activeIndex} />
+
       {/* Side progress dots — fixed right */}
       <div className="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 items-center">
         {sortedSections.map((_, idx) => (
