@@ -190,57 +190,37 @@ function TerminalTyping({ content, isActive }: { content: string; isActive: bool
   const [hasPlayed, setHasPlayed] = useState(false);
   const animationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Reset when section changes
   useEffect(() => {
     if (isActive && !hasPlayed) {
       setVisibleLines(0);
       setCharIndex(0);
-      // Start animation after a short delay
-      animationRef.current = setTimeout(() => {
-        setVisibleLines(1);
-      }, 300);
+      animationRef.current = setTimeout(() => setVisibleLines(1), 300);
     }
     return () => { if (animationRef.current) clearTimeout(animationRef.current); };
   }, [isActive, hasPlayed]);
 
-  // Animate line by line
   useEffect(() => {
     if (!isActive || hasPlayed || visibleLines === 0) return;
-
     if (visibleLines <= lines.length) {
       const currentLine = lines[visibleLines - 1] || '';
       const isComment = currentLine.trimStart().startsWith('#');
       const isEmpty = currentLine.trim() === '';
-
       if (charIndex < currentLine.length) {
-        // Type character by character
         const speed = isComment ? 8 : isEmpty ? 5 : 20;
         animationRef.current = setTimeout(() => setCharIndex(prev => prev + 3), speed);
       } else {
-        // Move to next line
         if (visibleLines < lines.length) {
           const nextLine = lines[visibleLines] || '';
           const delay = nextLine.trim() === '' ? 50 : nextLine.trimStart().startsWith('#') ? 100 : 150;
-          animationRef.current = setTimeout(() => {
-            setVisibleLines(prev => prev + 1);
-            setCharIndex(0);
-          }, delay);
-        } else {
-          setHasPlayed(true);
-        }
+          animationRef.current = setTimeout(() => { setVisibleLines(prev => prev + 1); setCharIndex(0); }, delay);
+        } else { setHasPlayed(true); }
       }
     }
-
     return () => { if (animationRef.current) clearTimeout(animationRef.current); };
   }, [isActive, visibleLines, charIndex, lines, hasPlayed]);
 
-  // If already played, show everything
   if (hasPlayed || !isActive) {
-    return (
-      <pre className="p-6 text-sm overflow-x-auto text-slate-200 leading-relaxed font-mono">
-        <code>{content}</code>
-      </pre>
-    );
+    return <pre className="p-6 text-sm overflow-x-auto text-slate-200 leading-relaxed font-mono"><code>{content}</code></pre>;
   }
 
   return (
@@ -250,15 +230,10 @@ function TerminalTyping({ content, isActive }: { content: string; isActive: bool
           const isCurrentLine = i === visibleLines - 1;
           const displayedText = isCurrentLine ? line.slice(0, charIndex) : line;
           const isComment = line.trimStart().startsWith('#');
-
           return (
             <React.Fragment key={i}>
-              <span className={isComment ? 'text-slate-500' : ''}>
-                {displayedText}
-              </span>
-              {isCurrentLine && (
-                <span className="inline-block w-2 h-4 bg-[#F97316] ml-0.5 animate-pulse align-middle" />
-              )}
+              <span className={isComment ? 'text-slate-500' : ''}>{displayedText}</span>
+              {isCurrentLine && <span className="inline-block w-2 h-4 bg-[#F97316] ml-0.5 animate-pulse align-middle" />}
               {'\n'}
             </React.Fragment>
           );
@@ -272,6 +247,10 @@ function TerminalTyping({ content, isActive }: { content: string; isActive: bool
 
 const watermarkLabels: Record<Section['type'], string> = {
   text: 'TEXTE', code: 'CODE', exercise: 'EXERCICE', tip: 'ASTUCE', warning: 'ALERTE', quiz: 'QUIZ',
+};
+
+const typeLabels: Record<Section['type'], string> = {
+  text: 'Contenu', code: 'Code', exercise: 'Exercice', tip: 'Astuce', warning: 'Attention', quiz: 'Quiz',
 };
 
 // ── Animated Section Wrapper (full-screen snap) ─────────────
@@ -410,7 +389,7 @@ function ImmersiveSection({ section, index, sessionId, quizData, onQuizPassed, i
         initial={{ opacity: 0, y: 60 }}
         animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0.3, y: 0 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 w-full max-w-3xl mx-auto"
+        className="relative z-10 w-full max-w-3xl"
       >
         {section.title && (
           <motion.h2
@@ -448,6 +427,7 @@ export function SectionRendererV2({
     isScrolling.current = true;
     setActiveIndex(idx);
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Allow next scroll after animation completes
     setTimeout(() => { isScrolling.current = false; }, 800);
   }, [sortedSections.length]);
 
@@ -524,7 +504,7 @@ export function SectionRendererV2({
     return () => window.removeEventListener('keydown', handleKey);
   }, [scrollToSection, sortedSections.length]);
 
-  // IntersectionObserver for dot sync on touch/trackpad
+  // IntersectionObserver to track which section is visible (for dot sync on touch/trackpad)
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
     sortedSections.forEach((_, idx) => {
@@ -571,7 +551,7 @@ export function SectionRendererV2({
         </div>
       </div>
 
-      {/* Sections — min-h-screen, snap for short, free scroll for tall */}
+      {/* Sections — each is 100vh with snap */}
       {sortedSections.map((section, idx) => (
         <div
           key={section.id}
