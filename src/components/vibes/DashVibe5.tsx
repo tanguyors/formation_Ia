@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   Terminal, Cpu, Workflow, ChevronRight, CheckCircle2, Zap, Lock, Clock,
   Target, Trophy, User, X, ArrowRight, LogOut, Shield, Menu, ChevronDown,
-  Moon, Sun
+  Moon, Sun, Calendar, Lightbulb, MessageSquare, Play
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx, type ClassValue } from 'clsx';
@@ -513,20 +513,27 @@ export default function DashVibe5() {
         </AnimatePresence>
       </header>
 
-      {/* ═══ MOBILE: Quest Log + Stats (collapsible) ═══ */}
+      {/* ═══ MOBILE: Agenda Semaine (collapsible) ═══ */}
       <div className="lg:hidden border-b-2" style={{ background: 'var(--cx-bg-alt)', borderColor: 'var(--cx-border)' }}>
         <button
           onClick={() => setMobileQuestOpen(!mobileQuestOpen)}
           className="w-full px-4 py-3 flex items-center justify-between"
         >
           <div className="flex items-center gap-2">
-            <Target size={14} style={{ color: 'var(--cx-accent)' }} />
+            <Calendar size={14} style={{ color: 'var(--cx-accent)' }} />
             <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--cx-text-secondary)' }}>
-              {currentSession ? `Mission: ${currentSession.number}` : 'Parcours terminé'}
+              Semaine {currentSession?.week || 1} — {currentSession?.weekTitle || 'Formation'}
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold" style={{ color: 'var(--cx-text-muted)' }}>{completedCount}/{totalCount}</span>
+            <span className="text-[10px] font-bold" style={{ color: 'var(--cx-text-muted)' }}>
+              {(() => {
+                const cw = weeks.find(w => w.number === (currentSession?.week || 1));
+                const done = cw?.sessions.filter(s => s.status === 'COMPLETED').length || 0;
+                const total = cw?.sessions.length || 3;
+                return `${done}/${total}`;
+              })()}
+            </span>
             <motion.div animate={{ rotate: mobileQuestOpen ? 180 : 0 }}>
               <ChevronDown size={16} style={{ color: 'var(--cx-text-muted)' }} />
             </motion.div>
@@ -541,36 +548,56 @@ export default function DashVibe5() {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-4 space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-4 rounded-xl" style={{ background: 'var(--cx-surface)', border: '2px solid var(--cx-border)' }}>
-                    <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'var(--cx-text-muted)' }}>Sessions</p>
-                    <p className="text-xl font-bold" style={{ color: 'var(--cx-text)' }}>{completedCount} / {totalCount}</p>
-                  </div>
-                  <div className="p-4 rounded-xl" style={{ background: 'var(--cx-surface)', border: '2px solid var(--cx-border)' }}>
-                    <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'var(--cx-text-muted)' }}>Points</p>
-                    <p className="text-xl font-bold" style={{ color: 'var(--cx-accent)' }}>{xp} XP</p>
-                  </div>
+              <div className="px-4 pb-4 space-y-3">
+                {/* Week progress bar */}
+                <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'var(--cx-border)' }}>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: (() => {
+                      const cw = weeks.find(w => w.number === (currentSession?.week || 1));
+                      const done = cw?.sessions.filter(s => s.status === 'COMPLETED').length || 0;
+                      const total = cw?.sessions.length || 3;
+                      return `${(done / total) * 100}%`;
+                    })() }}
+                    className="h-full rounded-full"
+                    style={{ background: 'var(--cx-accent)' }}
+                  />
                 </div>
 
-                {currentSession && (
-                  <div className="rounded-xl p-4" style={{ background: 'var(--cx-surface)', border: '2px solid var(--cx-accent-border)' }}>
-                    <p className="text-[10px] font-bold mb-2 uppercase" style={{ color: 'var(--cx-accent)' }}>Objectif Actuel</p>
-                    <p className="text-sm leading-relaxed font-bold" style={{ color: 'var(--cx-text-secondary)' }}>
-                      {currentSession.briefing}
-                    </p>
-                    {objectives.length > 0 && (
-                      <div className="mt-4 space-y-3">
-                        {objectives.map((obj, i) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0" style={{ background: 'var(--cx-surface)', borderColor: 'var(--cx-border-strong)' }} />
-                            <span className="text-xs" style={{ color: 'var(--cx-text-secondary)' }}>{obj}</span>
-                          </div>
-                        ))}
+                {/* Weekly sessions */}
+                {(() => {
+                  const cw = weeks.find(w => w.number === (currentSession?.week || 1));
+                  return (cw?.sessions || []).map((s) => {
+                    const isCurrent = s.status === 'CURRENT';
+                    const isCompleted = s.status === 'COMPLETED';
+                    const isLocked = s.status === 'LOCKED';
+                    return (
+                      <div
+                        key={s.id}
+                        onClick={() => !isLocked && setSelectedSession(s)}
+                        className={cn("rounded-xl p-3 flex items-center gap-3 transition-all", isLocked && "opacity-60")}
+                        style={{
+                          background: 'var(--cx-surface)',
+                          border: isCurrent ? '2px solid var(--cx-accent)' : '1px solid var(--cx-border)',
+                        }}
+                      >
+                        <div className="p-1.5 rounded-lg" style={{
+                          background: isCompleted ? 'var(--cx-green-bg)' : isCurrent ? 'var(--cx-accent-bg)' : 'var(--cx-surface-hover)',
+                          color: isCompleted ? 'var(--cx-green)' : isCurrent ? 'var(--cx-accent)' : 'var(--cx-text-muted)',
+                        }}>
+                          {isCompleted ? <CheckCircle2 size={14} /> : isCurrent ? <Play size={14} /> : <Lock size={14} />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[10px] font-bold uppercase" style={{ color: isCurrent ? 'var(--cx-accent)' : 'var(--cx-text-muted)' }}>{s.day}</span>
+                          <h4 className="text-xs font-bold truncate" style={{ color: isLocked ? 'var(--cx-text-muted)' : 'var(--cx-text)' }}>{s.title}</h4>
+                        </div>
+                        <span className="text-[10px] flex items-center gap-1" style={{ color: 'var(--cx-text-muted)' }}>
+                          <Clock size={10} />{s.duration}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                )}
+                    );
+                  });
+                })()}
               </div>
             </motion.div>
           )}
@@ -579,52 +606,197 @@ export default function DashVibe5() {
 
       {/* ═══ MAIN LAYOUT ═══ */}
       <div className="max-w-[1600px] mx-auto flex min-h-[calc(100vh-6rem)]">
-        {/* Desktop sidebar */}
-        <aside className="w-96 border-r-2 p-8 hidden lg:block overflow-y-auto" style={{ background: 'var(--cx-sidebar)', borderColor: 'var(--cx-border)' }}>
-          <div className="space-y-10">
-            <div>
-              <h2 className="text-xs uppercase tracking-widest font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--cx-text-muted)' }}><Target size={16} style={{ color: 'var(--cx-accent)' }} /> LOG DE QUÊTE</h2>
-              <div className="rounded-xl p-6 shadow-sm" style={{ background: 'var(--cx-surface)', border: '2px solid var(--cx-accent-border)' }}>
-                <p className="text-xs font-bold mb-3 uppercase" style={{ color: 'var(--cx-accent)' }}>Objectif Actuel</p>
-                <p className="text-base leading-relaxed font-bold" style={{ color: 'var(--cx-text-secondary)' }}>
-                  {currentSession
-                    ? currentSession.briefing
-                    : 'Toutes les sessions sont terminées. Félicitations !'}
-                </p>
-                {objectives.length > 0 && (
-                  <div className="mt-6 space-y-4">
-                    {objectives.map((obj, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded border-2 flex items-center justify-center" style={{ background: 'var(--cx-surface)', borderColor: 'var(--cx-border-strong)' }}>
+        {/* Desktop sidebar — Agenda Semaine */}
+        <aside className="w-96 border-r-2 hidden lg:flex flex-col overflow-y-auto" style={{ background: 'var(--cx-sidebar)', borderColor: 'var(--cx-border)' }}>
+          <div className="p-8 flex flex-col gap-8 flex-1">
+
+            {/* Current Week Header */}
+            <section className="flex flex-col gap-3">
+              <div className="flex justify-between items-end">
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--cx-accent)' }}>
+                    Semaine {currentSession?.week || weeks[0]?.number || 1}
+                  </span>
+                  <h2 className="text-sm font-bold mt-1" style={{ color: 'var(--cx-text)' }}>
+                    {currentSession?.weekTitle || weeks[0]?.title || 'Formation'}
+                  </h2>
+                </div>
+                <span className="text-[10px]" style={{ color: 'var(--cx-text-muted)' }}>
+                  {(() => {
+                    const cw = weeks.find(w => w.number === (currentSession?.week || 1));
+                    const done = cw?.sessions.filter(s => s.status === 'COMPLETED').length || 0;
+                    const total = cw?.sessions.length || 3;
+                    return `${done}/${total} SESSIONS`;
+                  })()}
+                </span>
+              </div>
+              <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'var(--cx-border)' }}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: (() => {
+                    const cw = weeks.find(w => w.number === (currentSession?.week || 1));
+                    const done = cw?.sessions.filter(s => s.status === 'COMPLETED').length || 0;
+                    const total = cw?.sessions.length || 3;
+                    return `${(done / total) * 100}%`;
+                  })() }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full rounded-full"
+                  style={{ background: 'var(--cx-accent)' }}
+                />
+              </div>
+            </section>
+
+            {/* Weekly Schedule */}
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center gap-2 mb-1">
+                <Calendar size={14} style={{ color: 'var(--cx-text-muted)' }} />
+                <span className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--cx-text-muted)' }}>
+                  Agenda de la semaine
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                {(() => {
+                  const cw = weeks.find(w => w.number === (currentSession?.week || 1));
+                  return (cw?.sessions || []).map((s) => {
+                    const isCurrent = s.status === 'CURRENT';
+                    const isCompleted = s.status === 'COMPLETED';
+                    const isLocked = s.status === 'LOCKED';
+                    return (
+                      <div
+                        key={s.id}
+                        onClick={() => !isLocked && setSelectedSession(s)}
+                        className={cn(
+                          "group relative overflow-hidden rounded-xl p-4 transition-all duration-300 cursor-pointer",
+                          isLocked && "opacity-60 cursor-not-allowed"
+                        )}
+                        style={{
+                          background: 'var(--cx-surface)',
+                          border: isCurrent ? '2px solid var(--cx-accent)' : '1px solid var(--cx-border)',
+                          boxShadow: isCurrent ? '0 0 15px var(--cx-glow)' : undefined,
+                        }}
+                      >
+                        <div className="relative z-10 flex items-start gap-4">
+                          <div className="mt-0.5 p-2 rounded-lg" style={{
+                            background: isCompleted ? 'var(--cx-green-bg)' : isCurrent ? 'var(--cx-accent-bg)' : 'var(--cx-surface-hover)',
+                            color: isCompleted ? 'var(--cx-green)' : isCurrent ? 'var(--cx-accent)' : 'var(--cx-text-muted)',
+                          }}>
+                            {isCompleted ? <CheckCircle2 size={16} /> : isCurrent ? (
+                              <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                                <Play size={16} fill="currentColor" fillOpacity={0.2} />
+                              </motion.div>
+                            ) : <Lock size={16} />}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: isCurrent ? 'var(--cx-accent)' : 'var(--cx-text-muted)' }}>
+                                {s.day}
+                              </span>
+                              <div className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--cx-text-muted)' }}>
+                                <Clock size={10} />
+                                {s.duration}
+                              </div>
+                            </div>
+                            <h3 className="text-xs font-bold truncate" style={{ color: isLocked ? 'var(--cx-text-muted)' : 'var(--cx-text)' }}>
+                              {s.title}
+                            </h3>
+                          </div>
                         </div>
-                        <span className="text-sm font-medium" style={{ color: 'var(--cx-text-secondary)' }}>{obj}</span>
+
+                        {isCurrent && (
+                          <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: '1px solid var(--cx-accent-border)' }}>
+                            <span className="text-[9px] font-bold" style={{ color: 'var(--cx-accent)' }}>EN COURS</span>
+                            <ChevronRight size={12} style={{ color: 'var(--cx-accent)' }} />
+                          </div>
+                        )}
                       </div>
+                    );
+                  });
+                })()}
+              </div>
+            </section>
+
+            {/* Conseil du jour */}
+            <section>
+              <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: 'var(--cx-surface)', border: '1px solid var(--cx-border)' }}>
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-md" style={{ background: 'var(--cx-accent-bg)' }}>
+                    <Lightbulb size={14} style={{ color: 'var(--cx-accent)' }} />
+                  </div>
+                  <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--cx-text)' }}>
+                    Conseil du jour
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed italic" style={{ color: 'var(--cx-text-secondary)' }}>
+                  &quot;Utilisez /plan pour réfléchir avant de coder&quot;
+                </p>
+              </div>
+            </section>
+
+            {/* Classement */}
+            <section className="flex flex-col gap-4">
+              <div className="flex items-center gap-2 mb-1">
+                <Trophy size={14} style={{ color: 'var(--cx-text-muted)' }} />
+                <span className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--cx-text-muted)' }}>
+                  Classement
+                </span>
+              </div>
+
+              <div className="rounded-xl p-4" style={{ background: 'var(--cx-surface)', border: '1px solid var(--cx-border)' }}>
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col">
+                    <span className="text-2xl font-bold tracking-tight" style={{ color: 'var(--cx-text)' }}>
+                      #42
+                    </span>
+                    <span className="text-[9px] uppercase tracking-tighter" style={{ color: 'var(--cx-text-muted)' }}>
+                      SUR 156 ÉLÈVES
+                    </span>
+                  </div>
+                  <div className="flex items-end gap-0.5 h-8">
+                    {[30, 45, 60, 40, 75, 55, 90, 40].map((height, i) => (
+                      <div
+                        key={i}
+                        className="w-1 rounded-t-full"
+                        style={{
+                          height: `${height}%`,
+                          background: i === 4 ? 'var(--cx-accent)' : 'var(--cx-border)',
+                        }}
+                      />
                     ))}
                   </div>
-                )}
-              </div>
-            </div>
-            <div>
-              <h2 className="text-xs uppercase tracking-widest font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--cx-text-muted)' }}><Trophy size={16} /> STATISTIQUES</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-5 rounded-xl" style={{ background: 'var(--cx-surface)', border: '2px solid var(--cx-border)' }}>
-                  <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'var(--cx-text-muted)' }}>Sessions</p>
-                  <p className="text-2xl font-bold" style={{ color: 'var(--cx-text)' }}>{completedCount} / {totalCount}</p>
                 </div>
-                <div className="p-5 rounded-xl" style={{ background: 'var(--cx-surface)', border: '2px solid var(--cx-border)' }}>
-                  <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: 'var(--cx-text-muted)' }}>Points</p>
-                  <p className="text-2xl font-bold" style={{ color: 'var(--cx-accent)' }}>{xp}</p>
+
+                <div className="h-1 w-full rounded-full relative overflow-hidden" style={{ background: 'var(--cx-border)' }}>
+                  <div className="absolute top-0 bottom-0 left-0" style={{ width: '42%', background: 'var(--cx-accent)', opacity: 0.3 }} />
+                  <div className="absolute top-0 bottom-0 w-1 rounded-full" style={{ left: '42%', background: 'var(--cx-accent)', boxShadow: '0 0 8px var(--cx-glow)' }} />
+                </div>
+                <div className="flex justify-between mt-2">
+                  <span className="text-[8px]" style={{ color: 'var(--cx-text-muted)' }}>TOP 30%</span>
+                  <span className="text-[8px]" style={{ color: 'var(--cx-text-muted)' }}>+3 RANGS</span>
                 </div>
               </div>
-            </div>
-            <div className="pt-6">
-              <div className="p-5 rounded-2xl text-white relative overflow-hidden group" style={{ background: dark ? '#1c1917' : '#0c0a09', border: dark ? '1px solid var(--cx-border-strong)' : 'none' }}>
-                <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:scale-110 transition-transform"><Zap size={64} fill="white" /></div>
-                <h3 className="text-xs font-bold mb-2">MODE AGENT CLI</h3>
-                <p className="text-[10px] leading-relaxed" style={{ color: 'var(--cx-text-muted)' }}>Utilisez `claude config --mode pro` pour activer les capacités d&apos;auto-correct avancées.</p>
-                <button className="mt-4 text-[10px] font-bold flex items-center gap-1 hover:gap-2 transition-all" style={{ color: 'var(--cx-accent)' }}>ACTIVER <ArrowRight size={12} /></button>
-              </div>
-            </div>
+            </section>
+
+            {/* Discord link */}
+            <section className="mt-auto">
+              <a
+                href="#"
+                className="flex items-center justify-between group p-3 rounded-xl transition-all"
+                style={{ background: dark ? '#1c1917' : '#0c0a09' }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-1.5 rounded-lg" style={{ background: dark ? '#292524' : '#1c1917' }}>
+                    <MessageSquare size={14} className="text-white group-hover:text-indigo-400 transition-colors" />
+                  </div>
+                  <span className="text-[10px] font-bold text-stone-200 uppercase tracking-wider">
+                    Communauté Discord
+                  </span>
+                </div>
+                <ChevronRight size={14} className="text-stone-500 group-hover:text-white transition-colors" />
+              </a>
+            </section>
+
           </div>
         </aside>
 

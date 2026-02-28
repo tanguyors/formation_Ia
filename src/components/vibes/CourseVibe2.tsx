@@ -305,9 +305,9 @@ function ImmersiveSection({ section, index, sessionId, quizData, onQuizPassed, i
     code: ({ children }: any) => <code className="bg-slate-100 text-[#F97316] px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>,
     blockquote: ({ children }: any) => <blockquote className="border-l-4 border-[#F97316] pl-5 my-5 text-lg italic text-slate-500">{children}</blockquote>,
     img: ({ src, alt }: any) => (
-      <div className="my-8 flex justify-center">
-        <img src={src} alt={alt || ''} className="rounded-2xl shadow-lg max-w-full h-auto max-h-[500px] object-contain" />
-      </div>
+      <span className="block my-8 text-center">
+        <img src={src} alt={alt || ''} className="inline-block rounded-2xl shadow-lg max-w-full h-auto max-h-[500px] object-contain" />
+      </span>
     ),
     table: ({ children }: any) => <div className="overflow-x-auto my-5 rounded-xl border border-slate-200"><table className="w-full text-left">{children}</table></div>,
     thead: ({ children }: any) => <thead className="bg-slate-50 border-b border-slate-200">{children}</thead>,
@@ -439,7 +439,9 @@ export function SectionRendererV2({
   const containerRef = useRef<HTMLDivElement>(null);
   const isScrolling = useRef(false);
 
-  const sortedSections = useMemo(() => [...sections].sort((a, b) => a.sortOrder - b.sortOrder), [sections]);
+  const sortedSections = useMemo(() =>
+    [...sections].filter(s => s.type !== 'quiz').sort((a, b) => a.sortOrder - b.sortOrder),
+  [sections]);
 
   const scrollToSection = useCallback((idx: number) => {
     if (idx < 0 || idx >= sortedSections.length) return;

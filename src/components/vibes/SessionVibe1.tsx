@@ -19,7 +19,8 @@ import {
   Lock,
   Trophy,
   Layout,
-  Loader2
+  Loader2,
+  Terminal
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { clsx, type ClassValue } from 'clsx';
@@ -148,12 +149,14 @@ export default function SessionVibe1() {
   const [resources, setResources] = useState<Resource[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
   const [quizData, setQuizData] = useState<any>(null);
+  const [hasPractice, setHasPractice] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     fetch(`/api/sessions/${id}/resources`).then(r => r.ok ? r.json() : { resources: [] }).then(d => setResources(d.resources || [])).catch(() => setResources([]));
     fetch(`/api/sessions/${id}/sections`).then(r => r.ok ? r.json() : { sections: [] }).then(d => setSections(d.sections || [])).catch(() => setSections([]));
     fetch(`/api/sessions/${id}/quiz`).then(r => r.ok ? r.json() : null).then(d => setQuizData(d)).catch(() => setQuizData(null));
+    fetch(`/api/sessions/${id}/practice`).then(r => r.ok ? r.json() : null).then(d => setHasPractice(d?.hasExercises || false)).catch(() => setHasPractice(false));
   }, [id]);
 
   const handleQuizPassed = () => {
@@ -319,13 +322,33 @@ export default function SessionVibe1() {
               {session.userStatus !== 'COMPLETED' ? 'Briefing' : 'Parcours'}
             </button>
           </div>
-          {/* Success overlay */}
-          <div className="fixed top-6 right-6 z-[60]">
+          {/* Action buttons (top right) */}
+          <div className="fixed top-6 right-6 z-[60] flex items-center gap-3">
+            {hasPractice && (
+              <motion.button
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => router.push(`/formation/${id}/practice`)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-full font-bold text-xs tracking-widest uppercase shadow-lg hover:bg-slate-800 transition-colors"
+              >
+                <Terminal size={14} /> Module Pratique
+              </motion.button>
+            )}
             <AnimatePresence mode="wait">
-              {showSuccess && (
+              {showSuccess ? (
                 <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-full font-bold text-xs tracking-widest uppercase shadow-lg">
                   <Trophy size={14} className="animate-bounce" /> MISSION ACCOMPLIE !
                 </motion.div>
+              ) : (
+                <motion.button
+                  key="validate"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onClick={() => router.push(`/formation/${id}/quiz`)}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#F97316] text-white rounded-full font-bold text-xs tracking-widest uppercase shadow-lg hover:bg-[#ea580c] transition-colors"
+                >
+                  <CheckCircle2 size={14} /> Valider le module
+                </motion.button>
               )}
             </AnimatePresence>
           </div>
