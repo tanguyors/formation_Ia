@@ -131,17 +131,20 @@ const RoomCard = ({ session, onClick }: { session: Session, onClick: () => void 
   );
 };
 
-const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () => void, onLaunch: () => void }) => {
+const Modal = ({ session, onClose, onLaunch, dark }: { session: Session, onClose: () => void, onLaunch: () => void, dark: boolean }) => {
   const isLocked = session.status === 'LOCKED';
   const isCompleted = session.status === 'COMPLETED';
   const isCurrent = session.status === 'CURRENT';
 
   const statusLabel = isCompleted ? 'Module Terminé' : isCurrent ? 'En Cours' : 'Accès Verrouillé';
-  const statusBadge = isCompleted
+  const statusBadgeClass = isCompleted
     ? 'bg-green-50 border-green-200 text-green-600'
     : isCurrent
       ? 'bg-[#F97316]/5 border-[#F97316]/25 text-[#F97316] animate-pulse'
-      : 'bg-slate-100 border-slate-200 text-slate-400';
+      : '';
+  const statusBadgeStyle = isLocked
+    ? { background: 'var(--cx-bg-alt)', borderColor: 'var(--cx-border)', color: 'var(--cx-text-muted)' }
+    : undefined;
 
   return (
     <motion.div
@@ -162,10 +165,11 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl bg-white backdrop-blur-xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-xl backdrop-blur-xl border shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        style={{ background: 'var(--cx-surface)', borderColor: 'var(--cx-border)' }}
       >
         {/* Top Progress Bar */}
-        <div className="h-1.5 bg-slate-100">
+        <div className="h-1.5" style={{ background: 'var(--cx-bg-alt)' }}>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: isCompleted ? '100%' : isCurrent ? '50%' : '0%' }}
@@ -177,7 +181,8 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors z-10"
+          className="absolute top-4 right-4 p-2 rounded-full transition-colors z-10"
+          style={{ color: 'var(--cx-text-muted)' }}
         >
           <X size={20} />
         </button>
@@ -186,17 +191,17 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-3">
-              <span className={cn('px-3 py-1 rounded-full text-[10px] uppercase tracking-widest border font-bold flex items-center gap-1.5', statusBadge)}>
+              <span className={cn('px-3 py-1 rounded-full text-[10px] uppercase tracking-widest border font-bold flex items-center gap-1.5', statusBadgeClass)} style={statusBadgeStyle}>
                 {isCompleted && <CheckCircle2 size={12} />}
                 {isCurrent && <Zap size={12} />}
                 {isLocked && <Lock size={12} />}
                 {statusLabel}
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+              <span className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--cx-text-muted)' }}>
                 {session.number} · {session.day}
               </span>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-2xl font-bold tracking-tight leading-tight" style={{ color: 'var(--cx-text)' }}>
               {session.title}
             </h2>
             <p className="text-[10px] uppercase tracking-widest text-[#F97316] mt-1.5 font-bold">
@@ -211,10 +216,10 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
               { icon: Clock, label: 'Durée', value: session.duration },
               { icon: Target, label: 'Secteur', value: `0${session.week}` },
             ].map((item) => (
-              <div key={item.label} className="bg-white border border-slate-200 rounded-xl p-3 sm:p-4 flex flex-col items-center text-center">
+              <div key={item.label} className="border rounded-xl p-3 sm:p-4 flex flex-col items-center text-center" style={{ background: 'var(--cx-surface)', borderColor: 'var(--cx-border)' }}>
                 <item.icon size={16} className="text-[#F97316] mb-2" />
-                <p className="text-[9px] uppercase tracking-widest text-slate-400 mb-0.5">{item.label}</p>
-                <p className={cn('text-sm font-bold', item.accent ? 'text-[#F97316]' : 'text-slate-800')}>{item.value}</p>
+                <p className="text-[9px] uppercase tracking-widest mb-0.5" style={{ color: 'var(--cx-text-muted)' }}>{item.label}</p>
+                <p className={cn('text-sm font-bold', item.accent ? 'text-[#F97316]' : '')} style={!item.accent ? { color: 'var(--cx-text)' } : undefined}>{item.value}</p>
               </div>
             ))}
           </div>
@@ -223,10 +228,10 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Target size={14} className="text-[#F97316]" />
-              <h4 className="text-[10px] uppercase tracking-widest font-bold text-slate-800">Description</h4>
+              <h4 className="text-[10px] uppercase tracking-widest font-bold" style={{ color: 'var(--cx-text)' }}>Description</h4>
             </div>
-            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
-              <p className="text-sm text-slate-900 leading-relaxed">
+            <div className="rounded-xl p-5 border" style={{ background: 'var(--cx-bg-alt)', borderColor: 'var(--cx-border)' }}>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--cx-text)' }}>
                 {session.briefing}
               </p>
             </div>
@@ -239,9 +244,10 @@ const Modal = ({ session, onClose, onLaunch }: { session: Session, onClose: () =
             className={cn(
               'w-full py-4 rounded-xl text-xs font-bold tracking-widest transition-all flex items-center justify-center gap-2',
               isLocked
-                ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                ? 'cursor-not-allowed border'
                 : 'bg-[#F97316] text-white hover:bg-[#ea580c] active:scale-[0.98] shadow-sm hover:shadow-md'
             )}
+            style={isLocked ? { background: 'var(--cx-bg-alt)', color: 'var(--cx-text-muted)', borderColor: 'var(--cx-border)' } : undefined}
           >
             {isLocked ? 'ACCÈS REFUSÉ' : isCompleted ? 'REVOIR LA SESSION' : 'LANCER LA SESSION'}
             {!isLocked && <ChevronRight size={16} />}
@@ -850,6 +856,7 @@ export default function DashVibe5() {
             session={selectedSession}
             onClose={() => setSelectedSession(null)}
             onLaunch={() => handleLaunchSession(selectedSession)}
+            dark={dark}
           />
         )}
       </AnimatePresence>

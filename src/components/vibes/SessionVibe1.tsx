@@ -27,6 +27,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useSession } from '@/hooks/useSession';
 import { useProgress } from '@/hooks/useProgress';
+import { useTheme } from '@/hooks/useTheme';
 import { SectionRendererV2 } from '@/components/vibes/CourseVibe2';
 
 function cn(...inputs: ClassValue[]) {
@@ -75,10 +76,10 @@ const getDayName = (day: number): string => {
 };
 
 const MetadataPill = ({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string | number }) => (
-  <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full">
+  <div className="flex items-center gap-2 px-3 py-1.5 border rounded-full" style={{ background: 'var(--cx-bg-alt)', borderColor: 'var(--cx-border)' }}>
     <Icon className="w-3.5 h-3.5 text-[#F97316]" />
-    <span className="text-[10px] uppercase tracking-widest text-slate-400 font-medium">{label}</span>
-    <span className="text-xs font-bold text-slate-900">{value}</span>
+    <span className="text-[10px] uppercase tracking-widest font-medium" style={{ color: 'var(--cx-text-muted)' }}>{label}</span>
+    <span className="text-xs font-bold" style={{ color: 'var(--cx-text)' }}>{value}</span>
   </div>
 );
 
@@ -89,27 +90,33 @@ const ResourceItem = ({ resource }: { resource: Resource }) => {
       href={resource.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-lg group hover:border-[#F97316]/30 hover:bg-orange-50/30 transition-all duration-200"
+      className="flex items-center justify-between p-3 border rounded-lg group hover:border-[#F97316]/30 transition-all duration-200"
+      style={{ background: 'var(--cx-surface)', borderColor: 'var(--cx-border)' }}
     >
       <div className="flex items-center gap-3">
-        <div className="text-slate-400 group-hover:text-[#F97316] transition-colors">
+        <div className="group-hover:text-[#F97316] transition-colors" style={{ color: 'var(--cx-text-muted)' }}>
           <Icon className="w-4 h-4" />
         </div>
-        <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">{resource.title}</span>
+        <span className="text-sm font-medium" style={{ color: 'var(--cx-text-secondary)' }}>{resource.title}</span>
       </div>
-      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-[#F97316] group-hover:translate-x-0.5 transition-all" />
+      <ChevronRight className="w-4 h-4 group-hover:text-[#F97316] group-hover:translate-x-0.5 transition-all" style={{ color: 'var(--cx-text-muted)' }} />
     </a>
   );
 };
 
 const ObjectiveCard = ({ text, index }: { text: string; index: number }) => {
   const styles = [
-    "bg-orange-50 border-orange-100 text-[#F97316]",
+    "border text-[#F97316]",
     "bg-slate-900 border-slate-800 text-white",
-    "bg-white border-slate-200 text-slate-800",
-    "bg-slate-100 border-slate-200 text-slate-600",
+    "border",
+    "border",
   ];
   const style = styles[index % styles.length];
+  const inlineStyles: Record<number, React.CSSProperties> = {
+    0: { background: 'var(--cx-accent-bg)', borderColor: 'var(--cx-accent-border)' },
+    2: { background: 'var(--cx-surface)', borderColor: 'var(--cx-border)', color: 'var(--cx-text)' },
+    3: { background: 'var(--cx-bg-alt)', borderColor: 'var(--cx-border)', color: 'var(--cx-text-secondary)' },
+  };
 
   return (
     <motion.div
@@ -120,6 +127,7 @@ const ObjectiveCard = ({ text, index }: { text: string; index: number }) => {
         "p-4 rounded-xl border flex flex-col justify-between min-h-[120px] transition-transform hover:scale-[1.02]",
         style
       )}
+      style={inlineStyles[index % styles.length] || {}}
     >
       <div className="flex justify-between items-start">
         <div className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border",
@@ -143,6 +151,7 @@ export default function SessionVibe1() {
   const id = params.id as string;
   const { session, loading, error } = useSession(id);
   const { refresh } = useProgress();
+  const { dark } = useTheme();
 
   const [phase, setPhase] = useState<'briefing' | 'course'>('briefing');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -167,20 +176,20 @@ export default function SessionVibe1() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white font-sans flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen font-sans flex flex-col items-center justify-center p-6" style={{ background: 'var(--cx-bg)' }}>
         <Loader2 className="w-8 h-8 text-[#F97316] animate-spin mb-4" />
-        <p className="text-[10px] uppercase tracking-widest text-slate-400">Chargement...</p>
+        <p className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--cx-text-muted)' }}>Chargement...</p>
       </div>
     );
   }
 
   if (error || !session) {
     return (
-      <div className="min-h-screen bg-white font-sans flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen font-sans flex flex-col items-center justify-center p-6 text-center" style={{ background: 'var(--cx-bg)' }}>
         <div className="w-16 h-16 bg-red-50 border border-red-200 rounded-full flex items-center justify-center mb-6">
           <Lock className="w-6 h-6 text-red-500" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-2">
+        <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: 'var(--cx-text)' }}>
           {error ? "Erreur de chargement" : "Session non trouvée"}
         </h1>
         <button onClick={() => router.push('/formation')} className="text-[#F97316] text-sm hover:underline flex items-center gap-2">
@@ -197,29 +206,29 @@ export default function SessionVibe1() {
     <AnimatePresence mode="wait">
       {effectivePhase === 'briefing' ? (
         <motion.div key="briefing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
-          <div className="relative min-h-screen bg-white font-sans overflow-hidden">
+          <div className="relative min-h-screen font-sans overflow-hidden" style={{ background: 'var(--cx-bg)' }}>
             {/* Decorative Elements */}
-            <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-orange-50 rounded-full blur-[120px] -z-10" />
-            <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] bg-slate-50 rounded-full blur-[100px] -z-10" />
+            <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full blur-[120px] -z-10" style={{ background: dark ? 'rgba(249,115,22,0.05)' : 'rgba(255,237,213,0.5)' }} />
+            <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] rounded-full blur-[100px] -z-10" style={{ background: 'var(--cx-bg-alt)' }} />
 
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4">
+            <header className="sticky top-0 z-50 backdrop-blur-md border-b px-6 py-4" style={{ background: dark ? 'rgba(15,23,42,0.8)' : 'rgba(255,255,255,0.8)', borderColor: 'var(--cx-border)' }}>
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                  <button onClick={() => router.push('/formation')} className="p-2 hover:bg-slate-100 rounded-full transition-colors group">
-                    <ArrowLeft className="w-5 h-5 text-slate-600 group-hover:text-[#F97316]" />
+                  <button onClick={() => router.push('/formation')} className="p-2 rounded-full transition-colors group" style={{ color: 'var(--cx-text-secondary)' }}>
+                    <ArrowLeft className="w-5 h-5 group-hover:text-[#F97316]" />
                   </button>
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold">Formation</span>
-                    <span className="text-sm font-bold text-slate-900 tracking-tight">CODEX_AI</span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: 'var(--cx-text-muted)' }}>Formation</span>
+                    <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--cx-text)' }}>CODEX_AI</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 bg-slate-100 px-3 py-1.5 rounded-full">
-                  <ChevronLeft className="w-4 h-4 text-slate-400 cursor-pointer hover:text-slate-900" />
-                  <span className="text-xs font-bold px-2 border-x border-slate-200 text-slate-600">
+                <div className="flex items-center gap-1 px-3 py-1.5 rounded-full" style={{ background: 'var(--cx-bg-alt)' }}>
+                  <ChevronLeft className="w-4 h-4 cursor-pointer" style={{ color: 'var(--cx-text-muted)' }} />
+                  <span className="text-xs font-bold px-2 border-x" style={{ borderColor: 'var(--cx-border)', color: 'var(--cx-text-secondary)' }}>
                     S{session.sessionNumber.toString().padStart(2, '0')} / 12
                   </span>
-                  <ChevronRight className="w-4 h-4 text-slate-400 cursor-pointer hover:text-slate-900" />
+                  <ChevronRight className="w-4 h-4 cursor-pointer" style={{ color: 'var(--cx-text-muted)' }} />
                 </div>
               </div>
             </header>
@@ -240,20 +249,20 @@ export default function SessionVibe1() {
                         </div>
                       )}
                     </div>
-                    <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-[0.9] tracking-tighter">
+                    <h1 className="text-5xl lg:text-7xl font-black leading-[0.9] tracking-tighter" style={{ color: 'var(--cx-text)' }}>
                       {session.title}
                     </h1>
                     <div className="max-w-xl">
-                      <p className="text-lg text-slate-500 leading-relaxed">{session.briefing}</p>
+                      <p className="text-lg leading-relaxed" style={{ color: 'var(--cx-text-muted)' }}>{session.briefing}</p>
                     </div>
                   </motion.div>
 
                   {/* Resources */}
                   {resources.length > 0 && (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-slate-50 rounded-3xl p-8 border border-slate-200">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-3xl p-8 border" style={{ background: 'var(--cx-bg-alt)', borderColor: 'var(--cx-border)' }}>
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-xs uppercase tracking-[0.2em] font-bold text-slate-400">Ressources & Matériel</h3>
-                        <div className="w-10 h-px bg-slate-200" />
+                        <h3 className="text-xs uppercase tracking-[0.2em] font-bold" style={{ color: 'var(--cx-text-muted)' }}>Ressources & Matériel</h3>
+                        <div className="w-10 h-px" style={{ background: 'var(--cx-border)' }} />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {resources.map((res) => (
@@ -268,8 +277,8 @@ export default function SessionVibe1() {
                 <div className="lg:col-span-5 space-y-8">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-xs uppercase tracking-[0.2em] font-bold text-slate-400">Objectifs de mission</h2>
-                      <div className="flex-1 h-px bg-slate-100" />
+                      <h2 className="text-xs uppercase tracking-[0.2em] font-bold" style={{ color: 'var(--cx-text-muted)' }}>Objectifs de mission</h2>
+                      <div className="flex-1 h-px" style={{ background: 'var(--cx-border)' }} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       {session.objectives.map((obj, i) => (
@@ -294,9 +303,10 @@ export default function SessionVibe1() {
                       className={cn(
                         "w-full group relative flex items-center justify-center gap-4 py-6 rounded-2xl font-bold text-xl uppercase tracking-wider transition-all duration-300",
                         isLocked
-                          ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                          : "bg-slate-900 text-white hover:bg-[#F97316] hover:shadow-[0_20px_40px_rgba(249,115,22,0.2)] shadow-xl"
+                          ? "cursor-not-allowed"
+                          : "text-white hover:bg-[#F97316] hover:shadow-[0_20px_40px_rgba(249,115,22,0.2)] shadow-xl"
                       )}
+                      style={isLocked ? { background: 'var(--cx-bg-alt)', color: 'var(--cx-text-muted)' } : { background: '#0f172a' }}
                     >
                       {isLocked ? (
                         <><Lock className="w-6 h-6" /> Session Verrouillée</>
@@ -355,9 +365,9 @@ export default function SessionVibe1() {
           {sections.length > 0 ? (
             <SectionRendererV2 sections={sections} sessionId={session.id} quizData={quizData} onQuizPassed={handleQuizPassed} />
           ) : (
-            <div className="h-screen w-full bg-[#1C1917] flex flex-col items-center justify-center text-slate-400 font-sans">
+            <div className="h-screen w-full flex flex-col items-center justify-center font-sans" style={{ background: 'var(--cx-bg)', color: 'var(--cx-text-muted)' }}>
               <Play size={48} className="mb-4 opacity-30" />
-              <p className="text-lg font-bold text-white">Contenu à venir</p>
+              <p className="text-lg font-bold" style={{ color: 'var(--cx-text)' }}>Contenu à venir</p>
               <p className="text-[10px] uppercase tracking-widest mt-2">Les slides seront disponibles bientôt</p>
             </div>
           )}
