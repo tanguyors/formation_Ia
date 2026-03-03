@@ -33,19 +33,34 @@ export async function GET(
       .order('sort_order', { ascending: true })
 
     // Parse JSON content for each exercise
+    // DB format: { briefing, objectives[], hints[], validation }
+    // Component format: { briefing, commands[], difficulty, duration, criteria[] }
     const exercises = (sections ?? []).map((s: Record<string, unknown>, index: number) => {
-      let parsed = { briefing: '', commands: [] as string[], difficulty: 'Débutant', duration: '10 min', criteria: [] as string[] }
+      let parsed: Record<string, unknown> = {}
       try {
         parsed = JSON.parse(s.content as string)
       } catch {
-        parsed.briefing = s.content as string
+        parsed = { briefing: s.content as string }
       }
+
+      // Map DB fields → component fields
+      const objectives = (parsed.objectives as string[]) ?? []
+      const hints = (parsed.hints as string[]) ?? []
+      const validation = parsed.validation as string | undefined
+      const commands = (parsed.commands as string[]) ?? objectives
+      const criteria = (parsed.criteria as string[]) ?? (validation ? [validation] : [])
+
       return {
         id: s.id as string,
         title: s.title as string,
         sortOrder: s.sort_order as number,
         missionNumber: index + 1,
-        ...parsed,
+        briefing: (parsed.briefing as string) ?? '',
+        commands,
+        difficulty: (parsed.difficulty as string) ?? 'Intermédiaire',
+        duration: (parsed.duration as string) ?? '15 min',
+        criteria,
+        hints,
       }
     })
 

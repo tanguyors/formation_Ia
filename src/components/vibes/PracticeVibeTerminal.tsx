@@ -25,10 +25,11 @@ export interface PracticeExercise {
   id: string;
   title: string;
   briefing: string;
-  commands: string[];
-  difficulty: string;
-  duration: string;
+  commands?: string[];
+  difficulty?: string;
+  duration?: string;
   criteria?: string[];
+  hints?: string[];
   missionNumber: number;
 }
 
@@ -252,7 +253,7 @@ export default function PracticeVibeTerminal({ exercises, session, onBack }: Pra
                 <div className="w-3 h-3 rounded-full bg-green-400/80" />
               </div>
               <div className="p-6 font-mono text-sm leading-relaxed space-y-3">
-                {currentMission.commands.map((cmd, i) => (
+                {(currentMission.commands ?? []).map((cmd, i) => (
                   <div key={i} className="flex gap-3 text-slate-200">
                     <span className="text-[#F97316] select-none font-bold">&gt;</span>
                     <code className="whitespace-pre-wrap">{cmd}</code>
