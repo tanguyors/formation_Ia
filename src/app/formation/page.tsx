@@ -1,5 +1,5 @@
-import DashVibe5 from "@/components/vibes/DashVibe5";
+import DashVibe6 from "@/components/vibes/DashVibe6";
 
 export default function FormationPage() {
-  return <DashVibe5 />;
+  return <DashVibe6 />;
 }
